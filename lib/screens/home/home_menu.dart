@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import '../../submit/submit_page.dart';
 import '../auth/login_screen.dart';
 import '../../services/auth_service.dart';
+import '../../main.dart';
+
+import '../status/status_page.dart';
+import '../history/history_page.dart';
+import '../alerts/alerts_page.dart';
+import '../profile/profile_page.dart';
 
 class HomeMenu extends StatefulWidget {
   const HomeMenu({super.key});
@@ -49,221 +55,356 @@ class _HomeMenuState extends State<HomeMenu> with TickerProviderStateMixin {
   }
 }
 
-class _HomeMenuContent extends StatelessWidget {
+class _HomeMenuContent extends StatefulWidget {
   final AnimationController sidebarController;
   final Animation<Offset> slideAnimation;
   final VoidCallback onProfileTap;
 
   const _HomeMenuContent({
+    super.key,
     required this.sidebarController,
     required this.slideAnimation,
     required this.onProfileTap,
   });
 
   @override
+  State<_HomeMenuContent> createState() => _HomeMenuContentState();
+}
+
+class _HomeMenuContentState extends State<_HomeMenuContent> {
+  String username = 'USER';
+
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
+  }
+
+  Future<void> loadUser() async {
+    final authService = AuthService();
+    final savedUser = await authService.getUsername();
+
+    if (!mounted) return;
+
+    setState(() {
+      username =
+          savedUser.isEmpty ? 'USER' : savedUser.toUpperCase();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final hour12 = now.hour == 0 ? 12 : (now.hour > 12 ? now.hour - 12 : now.hour);
-    final ampm = now.hour >= 12 ? 'P.M.' : 'A.M.';
-    final formattedDate =
-        '${_monthName(now.month)} ${now.day}, ${now.year} ${hour12}:${_twoDigits(now.minute)} $ampm';
+    final isDark =
+        Theme.of(context).brightness == Brightness.dark;
+
+    final bgColor =
+        Theme.of(context).scaffoldBackgroundColor;
+
+    final cardColor = Theme.of(context).cardColor;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: bgColor,
       body: Stack(
         children: [
-          // faded background with bsu.jpg
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: const AssetImage('assets/images/bsu.jpg'),
+                  image: const AssetImage(
+                      'assets/images/bsu.jpg'),
                   fit: BoxFit.cover,
                   colorFilter: ColorFilter.mode(
-                    Colors.white.withOpacity(0.65),
+                    isDark
+                        ? Colors.black.withOpacity(0.55)
+                        : Colors.white.withOpacity(0.65),
                     BlendMode.modulate,
                   ),
                 ),
               ),
-              child: const SizedBox.shrink(),
             ),
           ),
-          // main content
+
           SafeArea(
             child: Column(
               children: [
                 Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-                  color: Colors.white,
+                  margin: const EdgeInsets.all(14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: cardColor.withOpacity(0.92),
+                    borderRadius:
+                        BorderRadius.circular(18),
+                  ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
-                        onTap: onProfileTap,
+                        onTap: widget.onProfileTap,
                         child: CircleAvatar(
-                          radius: 26,
-                          backgroundColor: Colors.grey.shade300,
-                          child: Icon(Icons.person, color: Colors.grey.shade700, size: 30),
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.notifications, size: 32, color: Colors.redAccent),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Expanded(
-                  child: Stack(
-                    children: [
-                      Positioned.fill(child: const SizedBox.shrink()),
-                      Positioned(
-                        left: 24,
-                        right: 24,
-                        bottom: 36,
-                        child: Center(
-                          child: SizedBox(
-                            height: 110,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => const SubmitPage()),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.redAccent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(60),
-                                ),
-                                elevation: 12,
-                                shadowColor: Colors.black45,
-                                padding: const EdgeInsets.symmetric(horizontal: 28),
-                              ),
-                              child: const FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  'Submit',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 56,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                                ),
-                              ),
-                            ),
+                          radius: 24,
+                          backgroundColor:
+                              Colors.redAccent,
+                          child: const Icon(
+                            Icons.person,
+                            color: Colors.white,
                           ),
                         ),
                       ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.notifications,
+                          color: Colors.redAccent,
+                          size: 30,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const AlertsPage(),
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                  ),
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    shrinkWrap: true,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 1.45,
+                    physics:
+                        const NeverScrollableScrollPhysics(),
+                    children: [
+                      _DashboardCard(
+                        title: 'Status',
+                        icon: Icons.pending_actions,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const StatusPage(),
+                            ),
+                          );
+                        },
+                      ),
+
+                      _DashboardCard(
+                        title: 'History',
+                        icon: Icons.history,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const HistoryPage(),
+                            ),
+                          );
+                        },
+                      ),
+
+                      _DashboardCard(
+                        title: 'Alerts',
+                        icon: Icons.notifications_active,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const AlertsPage(),
+                            ),
+                          );
+                        },
+                      ),
+
+                      _DashboardCard(
+                        title: 'Profile',
+                        icon: Icons.person,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ProfilePage(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+
+                const Spacer(),
+
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(
+                          horizontal: 24),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 90,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const SubmitPage(),
+                          ),
+                        );
+                      },
+                      style:
+                          ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Colors.redAccent,
+                        elevation: 12,
+                        shape:
+                            RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(
+                                  50),
+                        ),
+                      ),
+                      child: const Text(
+                        'Submit',
+                        style: TextStyle(
+                          fontSize: 38,
+                          fontWeight:
+                              FontWeight.w900,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 40),
               ],
             ),
           ),
-          // Scrim/overlay
+
           AnimatedBuilder(
-            animation: sidebarController,
+            animation: widget.sidebarController,
             builder: (context, child) {
               return IgnorePointer(
-                ignoring: sidebarController.value < 0.5,
+                ignoring:
+                    widget.sidebarController.value <
+                        0.5,
                 child: GestureDetector(
                   onTap: () {
-                    if (sidebarController.isCompleted) {
-                      sidebarController.reverse();
-                    }
+                    widget.sidebarController
+                        .reverse();
                   },
                   child: Container(
-                    color: Colors.black.withOpacity(0.3 * sidebarController.value),
+                    color: Colors.black
+                        .withOpacity(
+                      0.35 *
+                          widget.sidebarController
+                              .value,
+                    ),
                   ),
                 ),
               );
             },
           ),
-          // Sidebar
+
           SlideTransition(
-            position: slideAnimation,
+            position: widget.slideAnimation,
             child: Container(
-              width: MediaQuery.of(context).size.width * 0.75,
-              decoration: BoxDecoration(
+              width:
+                  MediaQuery.of(context)
+                          .size
+                          .width *
+                      0.76,
+              decoration: const BoxDecoration(
                 color: Colors.redAccent,
-                borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
+                borderRadius:
+                    BorderRadius.only(
+                  topRight:
+                      Radius.circular(24),
+                  bottomRight:
+                      Radius.circular(24),
                 ),
               ),
               child: SafeArea(
                 child: Column(
                   children: [
-                    // User Header
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                      padding:
+                          const EdgeInsets.all(
+                              20),
                       child: Row(
                         children: [
-                          CircleAvatar(
-                            radius: 32,
-                            backgroundColor: Colors.white.withOpacity(0.3),
-                            child: Icon(Icons.person, color: Colors.white, size: 36),
+                          const CircleAvatar(
+                            radius: 28,
+                            backgroundColor:
+                                Colors.white24,
+                            child: Icon(
+                              Icons.person,
+                              color:
+                                  Colors.white,
+                            ),
                           ),
-                          const SizedBox(width: 16),
-                          const Text(
-                            'USER',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
+                          const SizedBox(
+                              width: 14),
+                          Expanded(
+                            child: Text(
+                              username,
+                              overflow:
+                                  TextOverflow
+                                      .ellipsis,
+                              style:
+                                  const TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight:
+                                    FontWeight
+                                        .bold,
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
+
                     const Divider(
                       color: Colors.white30,
-                      thickness: 1.5,
                     ),
-                    // Menu Items
-                    Expanded(
-                      child: Column(
-                        children: [
-                          _SidebarMenuItem(
-                            icon: Icons.person,
-                            label: 'Account Settings',
-                            onTap: () {
-                              sidebarController.reverse();
-                            },
-                          ),
-                          const SizedBox(height: 12),
-                          _SidebarMenuItemWithToggle(
-                            icon: Icons.palette,
-                            label: 'Theme',
-                            onTap: () {},
-                          ),
-                          const SizedBox(height: 12),
-                          _SidebarMenuItem(
-                            icon: Icons.logout,
-                            label: 'Log Out',
-                            onTap: () async {
-                              sidebarController.reverse();
 
-                              final authService = AuthService();
-                              await authService.logout();
+                    _SidebarMenuItemWithToggle(
+                      icon: Icons.dark_mode,
+                      label: 'Dark Mode',
+                      onTap: () {},
+                    ),
 
-                              if (!context.mounted) return;
+                    _SidebarMenuItem(
+                      icon: Icons.logout,
+                      label: 'Log Out',
+                      onTap: () async {
+                        await AuthService()
+                            .logout();
 
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const LoginScreen(),
-                                ),
-                                (route) => false,
-                              );
-                            },
+                        if (!context.mounted) {
+                          return;
+                        }
+
+                        Navigator
+                            .pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const LoginScreen(),
                           ),
-                        ],
-                      ),
+                          (route) => false,
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -274,26 +415,6 @@ class _HomeMenuContent extends StatelessWidget {
       ),
     );
   }
-
-  String _monthName(int m) {
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
-    ];
-    return months[m - 1];
-  }
-
-  String _twoDigits(int n) => n.toString().padLeft(2, '0');
 }
 
 class _SidebarMenuItem extends StatelessWidget {
@@ -380,13 +501,70 @@ class _SidebarMenuItemWithToggleState extends State<_SidebarMenuItemWithToggle> 
                 setState(() {
                   _isEnabled = value;
                 });
-                widget.onTap();
+                CampusFlowApp.of(context).changeTheme(value);
               },
               activeThumbColor: Colors.white,
               activeTrackColor: Colors.white24,
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _DashboardCard extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _DashboardCard({
+    required this.title,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cardColor =
+        Theme.of(context).cardColor;
+
+    return InkWell(
+      borderRadius:
+          BorderRadius.circular(18),
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: cardColor.withOpacity(0.92),
+          borderRadius:
+              BorderRadius.circular(18),
+          boxShadow: const [
+            BoxShadow(
+              blurRadius: 8,
+              color: Colors.black12,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment:
+              MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 34,
+              color: Colors.redAccent,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight:
+                    FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
