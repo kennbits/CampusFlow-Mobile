@@ -24,9 +24,18 @@ class PrimeWaterPage extends StatelessWidget {
             ),
           ),
         ),
-        title: const Text('PRIME WATER', style: TextStyle(color: Color(0xFFE63946), fontWeight: FontWeight.bold, fontSize: 18)),
+        title: const Text(
+          'PRIME WATER',
+          style: TextStyle(
+            color: Color(0xFFE63946),
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor:
+            Theme.of(context)
+                .scaffoldBackgroundColor,
         elevation: 0,
       ),
       body: const WaterSourceBody(),
@@ -74,16 +83,33 @@ class WaterSourceBody extends StatelessWidget {
         _SectionCard(
           title: 'Photo',
           child: Center(
-            child: ElevatedButton.icon(
-              onPressed: () {},
-              icon: const Icon(
-                  Icons.camera_alt),
-              label:
-                  const Text('Upload'),
-              style:
-                  ElevatedButton.styleFrom(
-                backgroundColor:
-                    Colors.redAccent,
+            child: SizedBox(
+              height: 46,
+              child: ElevatedButton.icon(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.camera_alt,
+                  color: Colors.white,
+                ),
+                label: const Text(
+                  'Upload Photo',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight:
+                        FontWeight.bold,
+                  ),
+                ),
+                style:
+                    ElevatedButton.styleFrom(
+                  backgroundColor:
+                      Colors.redAccent,
+                  shape:
+                      RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(
+                            14),
+                  ),
+                ),
               ),
             ),
           ),
@@ -94,8 +120,8 @@ class WaterSourceBody extends StatelessWidget {
         _SectionCard(
           title: 'Remarks',
           child: TextField(
-            minLines: 4,
-            maxLines: 6,
+            minLines: 5,
+            maxLines: 7,
             decoration: InputDecoration(
               hintText: 'Enter remarks',
               border: OutlineInputBorder(
@@ -115,6 +141,9 @@ class WaterSourceBody extends StatelessWidget {
                 ElevatedButton.styleFrom(
               backgroundColor:
                   Colors.redAccent,
+              elevation: 10,
+              shadowColor:
+                  Colors.black26,
               shape:
                   RoundedRectangleBorder(
                 borderRadius:

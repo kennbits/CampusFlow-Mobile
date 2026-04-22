@@ -8,22 +8,44 @@ class SubmitPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark =
+        Theme.of(context).brightness ==
+            Brightness.dark;
+
+    final bgColor =
+        Theme.of(context).scaffoldBackgroundColor;
+
+    final cardColor =
+        Theme.of(context).cardColor;
+
+    final textColor =
+        Theme.of(context)
+            .textTheme
+            .bodyLarge
+            ?.color ??
+        Colors.black;
+
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.white,
+      backgroundColor: bgColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: bgColor,
         elevation: 0,
-        leading: GestureDetector(
-          onTap: () => Navigator.pop(context),
+        leading: Padding(
+          padding:
+              const EdgeInsets.all(8),
           child: Container(
-            margin: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration:
+                const BoxDecoration(
               color: Colors.redAccent,
               shape: BoxShape.circle,
             ),
-            child: Center(
-              child: Icon(Icons.arrow_back, color: Colors.white, size: 24),
+            child: IconButton(
+              icon: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              ),
+              onPressed: () =>
+                  Navigator.pop(context),
             ),
           ),
         ),
@@ -31,110 +53,105 @@ class SubmitPage extends StatelessWidget {
           'SUBMIT',
           style: TextStyle(
             color: Colors.redAccent,
-            fontWeight: FontWeight.bold,
+            fontWeight:
+                FontWeight.bold,
             fontSize: 28,
             letterSpacing: 2,
           ),
         ),
         centerTitle: true,
       ),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: const AssetImage('assets/images/bsu.jpg'),
-                  fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(
-                    Colors.white.withOpacity(0.65),
-                    BlendMode.modulate,
+
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              padding:
+                  const EdgeInsets.all(16),
+              color: cardColor,
+              child: Center(
+                child: Text(
+                  'SELECT SUBMISSION TYPE',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight:
+                        FontWeight.w600,
+                    color: textColor,
                   ),
                 ),
               ),
             ),
-          ),
-          SafeArea(
-            child: Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: 60,
-                  color: Colors.white,
-                  child: const Center(
-                    child: Text(
-                      'SELECT SUBMISSION TYPE',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
+
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(18),
+                children: [
+                  SizedBox(
+                    height: 110,
+                    child: _SubmitMenuButton(
+                      icon: Icons.water_drop,
+                      iconColor: Colors.blue,
+                      label: 'Water',
+                      textColor: Colors.white,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const WaterReadingPage(),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(18),
-                    child: GridView.count(
-                      crossAxisCount: 1,
-                      mainAxisSpacing: 18,
-                      childAspectRatio: 3.3,
-                      children: [
-                        _SubmitMenuButton(
-                          icon: Icons.water_drop,
-                          iconColor: Colors.blue,
-                          label: 'Water',
-                          textColor: Colors.white,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    const WaterReadingPage(),
-                              ),
-                            );
-                          },
-                        ),
 
-                        _SubmitMenuButton(
-                          icon: Icons.flash_on,
-                          iconColor: Colors.amber,
-                          label: 'Electric',
-                          textColor: Colors.white,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    const ElectricReadingPage(),
-                              ),
-                            );
-                          },
-                        ),
+                  const SizedBox(height: 16),
 
-                        _SubmitMenuButton(
-                          icon: Icons.delete,
-                          iconColor: Colors.black,
-                          label: 'Waste',
-                          textColor: Colors.white,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    const WastePage(),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+                  SizedBox(
+                    height: 110,
+                    child: _SubmitMenuButton(
+                      icon: Icons.flash_on,
+                      iconColor: Colors.amber,
+                      label: 'Electric',
+                      textColor: Colors.white,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const ElectricReadingPage(),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                ),
-              ],
+
+                  const SizedBox(height: 16),
+
+                  SizedBox(
+                    height: 110,
+                    child: _SubmitMenuButton(
+                      icon: Icons.delete,
+                      iconColor: Colors.black,
+                      label: 'Waste',
+                      textColor: Colors.white,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const WastePage(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -190,7 +207,7 @@ class _SubmitMenuButton extends StatelessWidget {
             child: Text(
               label,
               style: const TextStyle(
-                fontSize: 24,
+                fontSize: 28,
                 fontWeight:
                     FontWeight.bold,
                 color: Colors.white,

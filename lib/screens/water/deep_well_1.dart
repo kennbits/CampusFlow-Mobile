@@ -8,12 +8,34 @@ class DeepWell1Page extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(color: Colors.black),
-        title: const Text('Deep Well 1', style: TextStyle(color: Colors.black)),
+        leading: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Container(
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color(0xFFE63946),
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              ),
+              onPressed: () =>
+                  Navigator.pop(context),
+            ),
+          ),
+        ),
+        title: const Text(
+          'DEEP WELL 1',
+          style: TextStyle(
+            color: Color(0xFFE63946),
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: const WaterSourceBody(),
     );

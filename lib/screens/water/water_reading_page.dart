@@ -10,22 +10,41 @@ class WaterReadingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bgColor =
+        Theme.of(context)
+            .scaffoldBackgroundColor;
+
+    final cardColor =
+        Theme.of(context).cardColor;
+
+    final textColor =
+        Theme.of(context)
+            .textTheme
+            .bodyLarge
+            ?.color ??
+        Colors.black;
+
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.white,
+      backgroundColor: bgColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: bgColor,
         elevation: 0,
-        leading: GestureDetector(
-          onTap: () => Navigator.pop(context),
+        leading: Padding(
+          padding:
+              const EdgeInsets.all(8),
           child: Container(
-            margin: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration:
+                const BoxDecoration(
               color: Colors.redAccent,
               shape: BoxShape.circle,
             ),
-            child: const Center(
-              child: Icon(Icons.arrow_back, color: Colors.white, size: 24),
+            child: IconButton(
+              icon: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              ),
+              onPressed: () =>
+                  Navigator.pop(context),
             ),
           ),
         ),
@@ -33,133 +52,146 @@ class WaterReadingPage extends StatelessWidget {
           'WATER',
           style: TextStyle(
             color: Colors.redAccent,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1,
+            fontWeight:
+                FontWeight.bold,
             fontSize: 22,
           ),
         ),
         centerTitle: true,
       ),
-      body: Stack(
-        children: [
-          // Faded background with bsu.jpg
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: const AssetImage('assets/images/bsu.jpg'),
-                  fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(
-                    Colors.white.withOpacity(0.65),
-                    BlendMode.modulate,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              padding:
+                  const EdgeInsets.all(16),
+              color: cardColor,
+              child: Center(
+                child: Text(
+                  'SELECT WATER SOURCE',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight:
+                        FontWeight.w600,
+                    color: textColor,
                   ),
                 ),
               ),
             ),
-          ),
-          SafeArea(
-            child: Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: 60,
-                  color: Colors.white,
-                  child: const Center(
-                    child: Text(
-                      'SELECT WATER SOURCE',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
+
+            Expanded(
+              child: ListView(
+                padding:
+                    const EdgeInsets.all(
+                        18),
+                children: [
+                  SizedBox(
+                    height: 95,
+                    child:
+                        _WaterMenuButton(
+                      label:
+                          'Prime Water',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const PrimeWaterPage(),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(18),
-                    child: ListView(
-                      children: [
+
+                  const SizedBox(
+                      height: 14),
+
+                  SizedBox(
+                    height: 95,
+                    child:
                         _WaterMenuButton(
-                          label: 'Prime Water',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    const PrimeWaterPage(),
-                              ),
-                            );
-                          },
-                        ),
-
-                        const SizedBox(height: 14),
-
-                        _WaterMenuButton(
-                          label: 'Deep Well 1',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    const DeepWell1Page(),
-                              ),
-                            );
-                          },
-                        ),
-
-                        const SizedBox(height: 14),
-
-                        _WaterMenuButton(
-                          label: 'Deep Well 2',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    const DeepWell2Page(),
-                              ),
-                            );
-                          },
-                        ),
-
-                        const SizedBox(height: 14),
-
-                        _WaterMenuButton(
-                          label: 'Deep Well 3',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    const DeepWell3Page(),
-                              ),
-                            );
-                          },
-                        ),
-
-                        const SizedBox(height: 14),
-
-                        _WaterMenuButton(
-                          label: 'Deep Well 4',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    const DeepWell4Page(),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+                      label:
+                          'Deep Well 1',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const DeepWell1Page(),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                ),
-              ],
+
+                  const SizedBox(
+                      height: 14),
+
+                  SizedBox(
+                    height: 95,
+                    child:
+                        _WaterMenuButton(
+                      label:
+                          'Deep Well 2',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const DeepWell2Page(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(
+                      height: 14),
+
+                  SizedBox(
+                    height: 95,
+                    child:
+                        _WaterMenuButton(
+                      label:
+                          'Deep Well 3',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const DeepWell3Page(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(
+                      height: 14),
+
+                  SizedBox(
+                    height: 95,
+                    child:
+                        _WaterMenuButton(
+                      label:
+                          'Deep Well 4',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const DeepWell4Page(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -167,13 +199,11 @@ class WaterReadingPage extends StatelessWidget {
 
 class _WaterMenuButton extends StatelessWidget {
   final String label;
-  final bool isPrimary;
   final VoidCallback onTap;
 
   const _WaterMenuButton({
     required this.label,
     required this.onTap,
-    this.isPrimary = false,
   });
 
   @override
@@ -208,7 +238,7 @@ class _WaterMenuButton extends StatelessWidget {
               child: Text(
                 label,
                 style: const TextStyle(
-                  fontSize: 22,
+                  fontSize: 26,
                   fontWeight:
                       FontWeight.bold,
                   color: Colors.white,

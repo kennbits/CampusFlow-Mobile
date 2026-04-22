@@ -4,54 +4,269 @@ class MeterFormPage extends StatefulWidget {
   final String title;
 
   const MeterFormPage({
-    super.key,
     required this.title,
   });
 
   @override
-  State<MeterFormPage> createState() => _MeterFormPageState();
+  State<MeterFormPage> createState() =>
+      _MeterFormPageState();
 }
 
-class _MeterFormPageState extends State<MeterFormPage> {
-  final readingController = TextEditingController();
-  final remarksController = TextEditingController();
+class _MeterFormPageState
+    extends State<MeterFormPage> {
+  final readingController =
+      TextEditingController();
+
+  final remarksController =
+      TextEditingController();
 
   void submit() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${widget.title} submitted')),
+    final reading =
+        readingController.text.trim();
+
+    ScaffoldMessenger.of(context)
+        .showSnackBar(
+      SnackBar(
+        content: Text(
+          '${widget.title} submitted: $reading kW',
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final bgColor =
+        Theme.of(context)
+            .scaffoldBackgroundColor;
+
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextField(
-              controller: readingController,
-              decoration: const InputDecoration(
-                labelText: 'Reading',
-              ),
+        backgroundColor: bgColor,
+        elevation: 0,
+        leading: Padding(
+          padding:
+              const EdgeInsets.all(8),
+          child: Container(
+            decoration:
+                const BoxDecoration(
+              color:
+                  Colors.redAccent,
+              shape:
+                  BoxShape.circle,
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: remarksController,
-              decoration: const InputDecoration(
-                labelText: 'Remarks',
+            child: IconButton(
+              icon: const Icon(
+                Icons.arrow_back,
+                color:
+                    Colors.white,
               ),
+              onPressed: () =>
+                  Navigator.pop(
+                      context),
             ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: submit,
-              child: const Text('Submit'),
-            )
-          ],
+          ),
         ),
+        title: Text(
+          widget.title,
+          style:
+              const TextStyle(
+            color:
+                Colors.redAccent,
+            fontWeight:
+                FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        centerTitle: true,
+      ),
+
+      body: ListView(
+        padding:
+            const EdgeInsets.all(18),
+        children: [
+          _SectionCard(
+            title: 'Reading',
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller:
+                        readingController,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration:
+                        InputDecoration(
+                      hintText:
+                          'Enter reading',
+                      border:
+                          OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.circular(
+                                12),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                    width: 10),
+                const Text('kW'),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          _SectionCard(
+            title: 'Photo',
+            child: Center(
+              child: SizedBox(
+                height: 46,
+                child: ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.camera_alt,
+                    color: Colors.white,
+                  ),
+                  label: const Text(
+                    'Upload Photo',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight:
+                          FontWeight.bold,
+                    ),
+                  ),
+                  style:
+                      ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Colors.redAccent,
+                    shape:
+                        RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(
+                              14),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          _SectionCard(
+            title: 'Remarks',
+            child: TextField(
+              controller:
+                  remarksController,
+              minLines: 5,
+              maxLines: 7,
+              decoration:
+                  InputDecoration(
+                hintText:
+                    'Enter remarks',
+                border:
+                    OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(
+                          12),
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(
+              height: 24),
+
+          SizedBox(
+            height: 56,
+            child:
+                ElevatedButton(
+              onPressed: submit,
+              style:
+                  ElevatedButton.styleFrom(
+                backgroundColor:
+                    Colors.redAccent,
+                elevation: 10,
+                shape:
+                    RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(
+                          18),
+                ),
+              ),
+              child:
+                  const Text(
+                'Submit',
+                style:
+                    TextStyle(
+                  color:
+                      Colors.white,
+                  fontSize: 18,
+                  fontWeight:
+                      FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionCard
+    extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const _SectionCard({
+    required this.title,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding:
+          const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color:
+            Theme.of(context)
+                .cardColor,
+        borderRadius:
+            BorderRadius.circular(
+                18),
+        boxShadow: const [
+          BoxShadow(
+            blurRadius: 8,
+            color:
+                Colors.black12,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment:
+            CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style:
+                const TextStyle(
+              color:
+                  Colors.redAccent,
+              fontWeight:
+                  FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(
+              height: 12),
+          child,
+        ],
       ),
     );
   }

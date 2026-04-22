@@ -1,172 +1,281 @@
 import 'package:flutter/material.dart';
 
 class ResidualsPage extends StatefulWidget {
-  const ResidualsPage({Key? key}) : super(key: key);
+  const ResidualsPage({super.key});
 
   @override
-  State<ResidualsPage> createState() => _ResidualsPageState();
+  State<ResidualsPage> createState() =>
+      _ResidualsPageState();
 }
 
-class _ResidualsPageState extends State<ResidualsPage> {
-  final TextEditingController _wasteController = TextEditingController();
-  final TextEditingController _remarksController = TextEditingController();
+class _ResidualsPageState
+    extends State<ResidualsPage> {
+  final _wasteController =
+      TextEditingController();
+
+  final _remarksController =
+      TextEditingController();
 
   void _pickPhoto() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Pick photo (not implemented)')),
+    ScaffoldMessenger.of(context)
+        .showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Upload photo coming soon',
+        ),
+      ),
     );
   }
 
   void _submit() {
-    final waste = _wasteController.text.trim();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Residuals submitted: $waste kg')),
+    final waste =
+        _wasteController.text.trim();
+
+    ScaffoldMessenger.of(context)
+        .showSnackBar(
+      SnackBar(
+        content: Text(
+          'Residuals submitted: $waste kg',
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return _buildForm('Residuals');
-  }
+    final bgColor =
+        Theme.of(context)
+            .scaffoldBackgroundColor;
 
-  Widget _buildForm(String title) {
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(
-        leading: Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: const Color(0xFFE63946),
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.pop(context),
+        backgroundColor: bgColor,
+        elevation: 0,
+        leading: Padding(
+          padding:
+              const EdgeInsets.all(8),
+          child: Container(
+            decoration:
+                const BoxDecoration(
+              color:
+                  Colors.redAccent,
+              shape:
+                  BoxShape.circle,
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.arrow_back,
+                color:
+                    Colors.white,
+              ),
+              onPressed: () =>
+                  Navigator.pop(
+                      context),
+            ),
           ),
         ),
-        title: Text(title.toUpperCase(), style: const TextStyle(color: Color(0xFFE63946), fontWeight: FontWeight.bold, fontSize: 18)),
+        title: const Text(
+          'RESIDUALS',
+          style: TextStyle(
+            color:
+                Colors.redAccent,
+            fontWeight:
+                FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
         centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Waste Generated Section - Light Blue Background
-            Container(
-              color: const Color(0xFFCCE5FF),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Waste Generated:', style: TextStyle(fontWeight: FontWeight.w600, color: Color(0xFFE63946), fontSize: 16)),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _wasteController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: Colors.grey),
-                            ),
-                            isDense: true,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                            filled: true,
-                            fillColor: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Text('kg', style: TextStyle(fontSize: 14)),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            
-            // Photo Section - Pink Background
-            Container(
-              color: const Color(0xFFFFCCD5),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Photo:', style: TextStyle(fontWeight: FontWeight.w600, color: Color(0xFFE63946), fontSize: 16)),
-                  const SizedBox(height: 12),
-                  Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFFE63946),
-                      ),
-                      child: IconButton(
-                        iconSize: 36,
-                        icon: const Icon(Icons.cloud_upload_outlined, color: Colors.white),
-                        onPressed: _pickPhoto,
+
+      body: ListView(
+        padding:
+            const EdgeInsets.all(18),
+        children: [
+          _SectionCard(
+            title:
+                'Waste Generated',
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller:
+                        _wasteController,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration:
+                        InputDecoration(
+                      hintText:
+                          'Enter weight',
+                      border:
+                          OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.circular(
+                                12),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(
+                    width: 10),
+                const Text('kg'),
+              ],
             ),
-            
-            // Remarks Section - Light Pink Background
-            Container(
-              color: const Color(0xFFFFEAED),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Remarks:', style: TextStyle(fontWeight: FontWeight.w600, color: Color(0xFFE63946), fontSize: 16)),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _remarksController,
-                    minLines: 5,
-                    maxLines: 8,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Colors.grey),
-                      ),
-                      hintText: 'Enter remarks',
-                      isDense: true,
-                      contentPadding: const EdgeInsets.all(12),
-                      filled: true,
-                      fillColor: Colors.white,
+          ),
+
+          const SizedBox(
+              height: 16),
+
+          _SectionCard(
+            title: 'Photo',
+            child: Center(
+              child: SizedBox(
+                height: 46,
+                child:
+                    ElevatedButton.icon(
+                  onPressed:
+                      _pickPhoto,
+                  icon:
+                      const Icon(
+                    Icons.camera_alt,
+                    color:
+                        Colors.white,
+                  ),
+                  label:
+                      const Text(
+                    'Upload Photo',
+                    style:
+                        TextStyle(
+                      color: Colors
+                          .white,
                     ),
                   ),
-                ],
-              ),
-            ),
-            
-            // Submit Button Section
-            Container(
-              color: const Color(0xFFFFEAED),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-              width: double.infinity,
-              child: Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFE63946),
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                  style:
+                      ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Colors.redAccent,
                   ),
-                  onPressed: _submit,
-                  child: const Text('Submit', style: TextStyle(color: Colors.white, fontSize: 16)),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+
+          const SizedBox(
+              height: 16),
+
+          _SectionCard(
+            title: 'Remarks',
+            child: TextField(
+              controller:
+                  _remarksController,
+              minLines: 5,
+              maxLines: 7,
+              decoration:
+                  InputDecoration(
+                hintText:
+                    'Enter remarks',
+                border:
+                    OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(
+                          12),
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(
+              height: 24),
+
+          SizedBox(
+            height: 56,
+            child:
+                ElevatedButton(
+              onPressed: _submit,
+              style:
+                  ElevatedButton.styleFrom(
+                backgroundColor:
+                    Colors.redAccent,
+                elevation: 10,
+                shape:
+                    RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(
+                          18),
+                ),
+              ),
+              child:
+                  const Text(
+                'Submit',
+                style:
+                    TextStyle(
+                  color:
+                      Colors.white,
+                  fontSize: 18,
+                  fontWeight:
+                      FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
-} 
+}
+
+class _SectionCard
+    extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const _SectionCard({
+    required this.title,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding:
+          const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color:
+            Theme.of(context)
+                .cardColor,
+        borderRadius:
+            BorderRadius.circular(
+                18),
+        boxShadow: const [
+          BoxShadow(
+            blurRadius: 8,
+            color:
+                Colors.black12,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment:
+            CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style:
+                const TextStyle(
+              color:
+                  Colors.redAccent,
+              fontWeight:
+                  FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(
+              height: 12),
+          child,
+        ],
+      ),
+    );
+  }
+}
