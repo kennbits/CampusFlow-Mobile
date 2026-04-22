@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'main_meter_page.dart'; // Make sure this matches your file name
-import 'submeter_page.dart';   // Optional: only if you’ve created SubmeterPage
+import 'submeter_page.dart';
 
 class ElectricReadingPage extends StatelessWidget {
-  const ElectricReadingPage({Key? key}) : super(key: key);
+  const ElectricReadingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +116,11 @@ class _MeterButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  const _MeterButton({required this.label, required this.onTap, Key? key}) : super(key: key);
+  const _MeterButton({
+    super.key,
+    required this.label,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {

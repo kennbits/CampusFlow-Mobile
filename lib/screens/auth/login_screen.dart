@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'home_menu.dart';
+import '../home/home_menu.dart';
+import '../../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -25,29 +26,36 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      await Future.delayed(const Duration(seconds: 1)); // mock delay
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
 
-      String email = _emailController.text.trim();
-      String password = _passwordController.text.trim();
+      final authService = AuthService();
+      final success = await authService.login(email, password);
 
-      // TODO: integrate real authentication here. The temporary mock users
-      // and checks have been removed so the flow continues to the success
-      // handling below.
-
-      // Login success
       setState(() => _isLoading = false);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Login successful!"),
-          backgroundColor: Colors.green,
-        ),
-      );
+      if (!mounted) return;
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeMenu()),
-      );
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Login successful!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeMenu()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Invalid username or password'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 

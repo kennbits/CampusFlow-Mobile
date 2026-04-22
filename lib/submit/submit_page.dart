@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'water_reading_page.dart';
-import 'electric_reading_page.dart';
-import 'waste_page.dart'; // ✅ Added this import
+import '../screens/water/water_reading_page.dart';
+import '../screens/electric/electric_reading_page.dart';
+import '../screens/waste/waste_page.dart';
 
 class SubmitPage extends StatelessWidget {
   const SubmitPage({super.key});

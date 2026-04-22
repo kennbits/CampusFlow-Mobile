@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'submit_page.dart';
-import 'login_screen.dart';
+import '../../submit/submit_page.dart';
+import '../auth/login_screen.dart';
 
 class HomeMenu extends StatefulWidget {
   const HomeMenu({super.key});

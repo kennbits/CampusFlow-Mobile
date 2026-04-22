@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SscPage extends StatefulWidget {
-  const SscPage({Key? key}) : super(key: key);
+  const SscPage({super.key});
 
   @override
   State<SscPage> createState() => _SscPageState();

@@ -8,7 +8,7 @@ import 'ssc.dart';
 import 'fdc.dart';
 
 class SubmeterPage extends StatelessWidget {
-  const SubmeterPage({Key? key}) : super(key: key);
+  const SubmeterPage({super.key});
 
   @override
   Widget build(BuildContext context) {
