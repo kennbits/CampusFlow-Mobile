@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../submit/submit_page.dart';
 import '../auth/login_screen.dart';
+import '../../services/auth_service.dart';
 
 class HomeMenu extends StatefulWidget {
   const HomeMenu({super.key});
@@ -244,11 +245,19 @@ class _HomeMenuContent extends StatelessWidget {
                           _SidebarMenuItem(
                             icon: Icons.logout,
                             label: 'Log Out',
-                            onTap: () {
+                            onTap: () async {
                               sidebarController.reverse();
+
+                              final authService = AuthService();
+                              await authService.logout();
+
+                              if (!context.mounted) return;
+
                               Navigator.pushAndRemoveUntil(
                                 context,
-                                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                                MaterialPageRoute(
+                                  builder: (_) => const LoginScreen(),
+                                ),
                                 (route) => false,
                               );
                             },
@@ -379,84 +388,6 @@ class _SidebarMenuItemWithToggleState extends State<_SidebarMenuItemWithToggle> 
           ),
         ],
       ),
-    );
-  }
-}
-
-class _LargeMenuButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-  const _LargeMenuButton({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 82,
-      width: double.infinity,
-      child: OutlinedButton(
-        onPressed: onTap,
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(color: Colors.black.withOpacity(0.35), width: 1.6),
-          backgroundColor: Colors.white.withOpacity(0.92),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 26, color: Colors.black87),
-            const SizedBox(width: 12),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// placeholder target screens
-class SubmitScreen extends StatelessWidget {
-  const SubmitScreen({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Submit'), backgroundColor: Colors.green),
-      body: const Center(child: Text('Submit screen')),
-    );
-  }
-}
-
-class StatusScreen extends StatelessWidget {
-  const StatusScreen({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Status'), backgroundColor: Colors.green),
-      body: const Center(child: Text('Status screen')),
-    );
-  }
-}
-
-class HistoryScreen extends StatelessWidget {
-  const HistoryScreen({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('History'), backgroundColor: Colors.green),
-      body: const Center(child: Text('History screen')),
     );
   }
 }

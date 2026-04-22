@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
-import 'steerhub.dart';
-import 'albert_einstein.dart';
-import 'automotive.dart';
-import 'cet.dart';
-import 'rgr.dart';
-import 'ssc.dart';
-import 'fdc.dart';
+import 'meter_form_page.dart';
 
 class SubmeterPage extends StatelessWidget {
   const SubmeterPage({super.key});
@@ -85,19 +79,40 @@ class SubmeterPage extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            _LocationButton(label: 'STEERHUB', page: const SteerhubPage()),
+                            _LocationButton(
+                              label: 'STEERHUB',
+                              page: const MeterFormPage(title: 'STEERHUB'),
+                            ),
                             const SizedBox(height: 18),
-                            _LocationButton(label: 'ALBERT EINSTEIN', page: const AlbertEinsteinPage()),
+                            _LocationButton(
+                              label: 'ALBERT EINSTEIN',
+                              page: const MeterFormPage(title: 'ALBERT EINSTEIN'),
+                            ),
                             const SizedBox(height: 18),
-                            _LocationButton(label: 'AUTOMOTIVE', page: const AutomotivePage()),
+                            _LocationButton(
+                              label: 'AUTOMOTIVE',
+                              page: const MeterFormPage(title: 'AUTOMOTIVE'),
+                            ),
                             const SizedBox(height: 18),
-                            _LocationButton(label: 'CET', page: const CetPage()),
+                            _LocationButton(
+                              label: 'CET',
+                              page: const MeterFormPage(title: 'CET'),
+                            ),
                             const SizedBox(height: 18),
-                            _LocationButton(label: 'RGR', page: const RgrPage()),
+                            _LocationButton(
+                              label: 'RGR',
+                              page: const MeterFormPage(title: 'RGR'),
+                            ),
                             const SizedBox(height: 18),
-                            _LocationButton(label: 'SSC', page: const SscPage()),
+                            _LocationButton(
+                              label: 'SSC',
+                              page: const MeterFormPage(title: 'SSC'),
+                            ),
                             const SizedBox(height: 18),
-                            _LocationButton(label: 'FDC', page: const FdcPage()),
+                            _LocationButton(
+                              label: 'FDC',
+                              page: const MeterFormPage(title: 'FDC'),
+                            ),
                           ],
                         ),
                       ),
