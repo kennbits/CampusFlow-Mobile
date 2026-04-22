@@ -1,73 +1,160 @@
 import 'package:flutter/material.dart';
+import '../auth/login_screen.dart';
+import '../../services/auth_service.dart';
+import 'change_password_page.dart';
+import 'about_page.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() =>
+      _ProfilePageState();
+}
+
+class _ProfilePageState
+    extends State<ProfilePage> {
+  String username = 'USER';
+
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
+  }
+
+  Future<void> loadUser() async {
+    final authService = AuthService();
+    final savedUser =
+        await authService.getUsername();
+
+    if (!mounted) return;
+
+    setState(() {
+      username =
+          savedUser.isEmpty
+              ? 'USER'
+              : savedUser.toUpperCase();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar:
           AppBar(title: const Text('Profile')),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const SizedBox(height: 10),
+      body: ListView(
+        padding:
+            const EdgeInsets.all(20),
+        children: [
+          const SizedBox(height: 10),
 
-            const CircleAvatar(
-              radius: 45,
-              backgroundColor:
-                  Colors.redAccent,
-              child: Icon(
-                Icons.person,
-                color: Colors.white,
-                size: 50,
-              ),
+          const CircleAvatar(
+            radius: 46,
+            backgroundColor:
+                Colors.redAccent,
+            child: Icon(
+              Icons.person,
+              color: Colors.white,
+              size: 48,
             ),
+          ),
 
-            const SizedBox(height: 14),
+          const SizedBox(height: 14),
 
-            const Text(
-              'ADMIN',
-              style: TextStyle(
+          Center(
+            child: Text(
+              username,
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight:
                     FontWeight.bold,
               ),
             ),
+          ),
 
-            const SizedBox(height: 6),
+          const SizedBox(height: 6),
 
-            Text(
+          Center(
+            child: Text(
               'CampusFlow User',
               style: TextStyle(
-                color: Colors.grey.shade600,
+                color:
+                    Colors.grey.shade600,
               ),
             ),
+          ),
 
-            const SizedBox(height: 28),
+          const SizedBox(height: 28),
 
-            ListTile(
-              leading:
-                  const Icon(Icons.lock),
-              title: const Text(
-                  'Change Password'),
-              trailing: const Icon(
-                  Icons.chevron_right),
-              onTap: () {},
-            ),
-
-            ListTile(
+          Card(
+            child: ListTile(
               leading:
                   const Icon(Icons.info),
               title:
                   const Text('About App'),
               trailing: const Icon(
                   Icons.chevron_right),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        const AboutPage(),
+                  ),
+                );
+              },
             ),
-          ],
-        ),
+          ),
+
+          Card(
+            child: ListTile(
+              leading:
+                  const Icon(Icons.lock),
+              title: const Text(
+                  'Change Password'),
+              trailing: const Icon(
+                  Icons.chevron_right),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        const ChangePasswordPage(),
+                  ),
+                );
+              },
+            ),
+          ),
+
+          Card(
+            child: ListTile(
+              leading:
+                  const Icon(Icons.logout),
+              title:
+                  const Text('Logout'),
+              trailing: const Icon(
+                  Icons.chevron_right),
+              onTap: () async {
+                await AuthService()
+                    .logout();
+
+                if (!context.mounted) {
+                  return;
+                }
+
+                Navigator
+                    .pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        const LoginScreen(),
+                  ),
+                  (route) => false,
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

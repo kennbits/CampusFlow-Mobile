@@ -73,52 +73,61 @@ class SubmitPage extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 18),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _SubmitMenuButton(
-                            icon: Icons.water_drop,
-                            iconColor: Colors.blue,
-                            label: 'Water',
-                            textColor: Colors.black,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (_) => const WaterReadingPage()),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 24),
-                          _SubmitMenuButton(
-                            icon: Icons.flash_on,
-                            iconColor: Colors.amber,
-                            label: 'Electric',
-                            textColor: Colors.black,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (_) => const ElectricReadingPage()),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 24),
-                          _SubmitMenuButton(
-                            icon: Icons.delete,
-                            iconColor: Colors.black,
-                            label: 'Waste',
-                            textColor: Colors.black,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (_) => const WastePage()),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(18),
+                    child: GridView.count(
+                      crossAxisCount: 1,
+                      mainAxisSpacing: 18,
+                      childAspectRatio: 3.3,
+                      children: [
+                        _SubmitMenuButton(
+                          icon: Icons.water_drop,
+                          iconColor: Colors.blue,
+                          label: 'Water',
+                          textColor: Colors.white,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    const WaterReadingPage(),
+                              ),
+                            );
+                          },
+                        ),
+
+                        _SubmitMenuButton(
+                          icon: Icons.flash_on,
+                          iconColor: Colors.amber,
+                          label: 'Electric',
+                          textColor: Colors.white,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    const ElectricReadingPage(),
+                              ),
+                            );
+                          },
+                        ),
+
+                        _SubmitMenuButton(
+                          icon: Icons.delete,
+                          iconColor: Colors.black,
+                          label: 'Waste',
+                          textColor: Colors.white,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    const WastePage(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -148,35 +157,53 @@ class _SubmitMenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 86,
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.redAccent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(44),
-          ),
-          elevation: 12,
-          shadowColor: Colors.black45,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+    return ElevatedButton(
+      onPressed: onTap,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.redAccent,
+        elevation: 12,
+        shadowColor: Colors.black38,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 18,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 36, color: Colors.white),
-            const SizedBox(width: 14),
-            Text(
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(26),
+        ),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 24,
+            backgroundColor:
+                Colors.white24,
+            child: Icon(
+              icon,
+              color: Colors.white,
+              size: 28,
+            ),
+          ),
+
+          const SizedBox(width: 16),
+
+          Expanded(
+            child: Text(
               label,
               style: const TextStyle(
                 fontSize: 24,
-                fontWeight: FontWeight.bold,
+                fontWeight:
+                    FontWeight.bold,
                 color: Colors.white,
               ),
             ),
-          ],
-        ),
+          ),
+
+          const Icon(
+            Icons.chevron_right,
+            color: Colors.white,
+            size: 30,
+          ),
+        ],
       ),
     );
   }
