@@ -9,7 +9,7 @@ class AuthService {
   static const String _roleKey = 'role';
 
   static const String baseUrl =
-      'http://127.0.0.1:8000/api';
+      'http://172.16.150.140:8000/api';
 
   Future<bool> login(
     String username,
