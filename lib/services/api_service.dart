@@ -50,4 +50,32 @@ class ApiService {
 
     return jsonDecode(response.body);
   }
+
+  // store reading
+  static Future<dynamic> storeReading({
+    required String module,
+    required String sourceName,
+    required String reading,
+    required String remarks,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/readings'),
+      headers: {
+        'Accept': 'application/json',
+      },
+      body: {
+        'module': module,
+        'source_name': sourceName,
+        'reading': reading,
+        'remarks': remarks,
+      },
+    );
+
+    if (response.statusCode == 200 ||
+        response.statusCode == 201) {
+      return jsonDecode(response.body);
+    }
+
+    throw Exception('Failed');
+  }
 }

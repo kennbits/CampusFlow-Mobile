@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthService {
   static const String _loginKey = 'is_logged_in';
   static const String _userKey = 'username';
+  static const String _emailKey = 'email';
+  static const String _roleKey = 'role';
 
   static const String baseUrl =
       'http://127.0.0.1:8000/api';
@@ -40,11 +42,23 @@ class AuthService {
                 .getInstance();
 
         await prefs.setBool(
-            _loginKey, true);
+          _loginKey,
+          true,
+        );
 
         await prefs.setString(
           _userKey,
-          data['name'] ?? username,
+          data['name'] ?? '',
+        );
+
+        await prefs.setString(
+          _emailKey,
+          data['email'] ?? '',
+        );
+
+        await prefs.setString(
+          _roleKey,
+          data['role'] ?? '',
         );
 
         return true;
@@ -82,6 +96,26 @@ class AuthService {
 
     return prefs.getString(
             _userKey) ??
+        '';
+  }
+
+  Future<String> getEmail() async {
+    final prefs =
+        await SharedPreferences
+            .getInstance();
+
+    return prefs.getString(
+            _emailKey) ??
+        '';
+  }
+
+  Future<String> getRole() async {
+    final prefs =
+        await SharedPreferences
+            .getInstance();
+
+    return prefs.getString(
+            _roleKey) ??
         '';
   }
 }

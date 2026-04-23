@@ -37,7 +37,9 @@ class DeepWell2Page extends StatelessWidget {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
       ),
-      body: const WaterSourceBody(),
+      body: const WaterSourceBody(
+        sourceName: 'Deep Well 2',
+      ),
     );
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../auth/login_screen.dart';
 import '../../services/auth_service.dart';
-import '../../services/api_service.dart';
 import 'change_password_page.dart';
 import 'about_page.dart';
 
@@ -27,35 +26,16 @@ class _ProfilePageState
   }
 
   Future<void> loadProfile() async {
-    try {
-      final data =
-          await ApiService.getProfile();
-
-      if (!mounted) return;
-
-      setState(() {
-        username =
-            (data['name'] ?? 'USER')
-                .toString()
-                .toUpperCase();
-
-        email =
-            data['email'] ?? '';
-
-        role = data['role'] ??
-            'CampusFlow User';
-
-        isLoading = false;
-      });
-    } catch (e) {
-      await loadLocalUser();
-    }
-  }
-
-  Future<void> loadLocalUser() async {
     final authService = AuthService();
+
     final savedUser =
         await authService.getUsername();
+
+    final savedEmail =
+        await authService.getEmail();
+
+    final savedRole =
+        await authService.getRole();
 
     if (!mounted) return;
 
@@ -64,6 +44,12 @@ class _ProfilePageState
           savedUser.isEmpty
               ? 'USER'
               : savedUser.toUpperCase();
+
+      email = savedEmail;
+
+      role = savedRole.isEmpty
+          ? 'CampusFlow User'
+          : savedRole;
 
       isLoading = false;
     });
