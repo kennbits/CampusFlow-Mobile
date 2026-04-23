@@ -8,6 +8,7 @@ import '../status/status_page.dart';
 import '../history/history_page.dart';
 import '../alerts/alerts_page.dart';
 import '../profile/profile_page.dart';
+import '../../services/api_service.dart';
 
 class HomeMenu extends StatefulWidget {
   const HomeMenu({super.key});
@@ -74,10 +75,14 @@ class _HomeMenuContent extends StatefulWidget {
 class _HomeMenuContentState extends State<_HomeMenuContent> {
   String username = 'USER';
 
+  int statusCount = 0;
+  int alertCount = 0;
+
   @override
   void initState() {
     super.initState();
     loadUser();
+    loadDashboardData();
   }
 
   Future<void> loadUser() async {
@@ -90,6 +95,20 @@ class _HomeMenuContentState extends State<_HomeMenuContent> {
       username =
           savedUser.isEmpty ? 'USER' : savedUser.toUpperCase();
     });
+  }
+
+  Future<void> loadDashboardData() async {
+    try {
+      final statusData = await ApiService.getStatus();
+      final alertData = await ApiService.getAlerts();
+
+      if (!mounted) return;
+
+      setState(() {
+        statusCount = statusData.length;
+        alertCount = alertData.length;
+      });
+    } catch (e) {}
   }
 
   @override
@@ -175,10 +194,10 @@ class _HomeMenuContentState extends State<_HomeMenuContent> {
                                 minWidth: 18,
                                 minHeight: 18,
                               ),
-                              child: const Center(
+                              child: Center(
                                 child: Text(
-                                  '3',
-                                  style: TextStyle(
+                                  '$alertCount',
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
@@ -206,7 +225,7 @@ class _HomeMenuContentState extends State<_HomeMenuContent> {
                     physics: const NeverScrollableScrollPhysics(),
                     children: [
                       _DashboardCard(
-                        title: 'Status',
+                        title: 'Status ($statusCount)',
                         icon: Icons.pending_actions,
                         onTap: () {
                           Navigator.push(

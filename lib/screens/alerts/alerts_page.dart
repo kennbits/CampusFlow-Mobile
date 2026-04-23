@@ -1,50 +1,110 @@
 import 'package:flutter/material.dart';
+import '../../services/api_service.dart';
 
-class AlertsPage extends StatelessWidget {
+class AlertsPage extends StatefulWidget {
   const AlertsPage({super.key});
+
+  @override
+  State<AlertsPage> createState() => _AlertsPageState();
+}
+
+class _AlertsPageState extends State<AlertsPage> {
+  List<dynamic> items = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadAlerts();
+  }
+
+  Future<void> loadAlerts() async {
+    try {
+      final data = await ApiService.getAlerts();
+
+      if (!mounted) return;
+
+      setState(() {
+        items = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> refreshData() async {
+    await loadAlerts();
+  }
+
+  IconData getIcon(String type) {
+    switch (type.toLowerCase()) {
+      case 'warning':
+        return Icons.warning;
+      case 'critical':
+        return Icons.error;
+      case 'info':
+        return Icons.info;
+      default:
+        return Icons.notifications;
+    }
+  }
+
+  Color getColor(String type) {
+    switch (type.toLowerCase()) {
+      case 'warning':
+        return Colors.orange;
+      case 'critical':
+        return Colors.red;
+      case 'info':
+        return Colors.green;
+      default:
+        return Colors.blue;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          AppBar(title: const Text('Alerts')),
-      body: ListView(
-        padding:
-            const EdgeInsets.all(16),
-        children: const [
-          _AlertCard(
-            title: 'Water reading due today',
-            message:
-                'Please submit Deep Well readings before 5:00 PM.',
-            icon: Icons.water_drop,
-            color: Colors.blue,
-          ),
-          SizedBox(height: 12),
-          _AlertCard(
-            title: 'Electric reading pending',
-            message:
-                'SSC electric reading is still pending review.',
-            icon: Icons.bolt,
-            color: Colors.orange,
-          ),
-          SizedBox(height: 12),
-          _AlertCard(
-            title: 'Waste report rejected',
-            message:
-                'Residual waste submission needs correction.',
-            icon: Icons.delete,
-            color: Colors.red,
-          ),
-          SizedBox(height: 12),
-          _AlertCard(
-            title: 'System Notice',
-            message:
-                'CampusFlow maintenance scheduled this weekend.',
-            icon: Icons.info,
-            color: Colors.green,
-          ),
-        ],
+      appBar: AppBar(
+        title: const Text('Alerts'),
       ),
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : items.isEmpty
+              ? const Center(
+                  child: Text('No alerts found'),
+                )
+              : RefreshIndicator(
+                  onRefresh: refreshData,
+                  child: ListView.separated(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: items.length,
+                    separatorBuilder: (_, __) =>
+                        const SizedBox(height: 12),
+                    itemBuilder: (context, i) {
+                      final item = items[i];
+
+                      final type =
+                          item['type'] ?? 'info';
+
+                      return _AlertCard(
+                        title:
+                            item['title'] ?? '',
+                        message:
+                            item['message'] ?? '',
+                        icon: getIcon(type),
+                        color: getColor(type),
+                      );
+                    },
+                  ),
+                ),
     );
   }
 }
@@ -65,11 +125,9 @@ class _AlertCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding:
-          const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color:
-            Theme.of(context).cardColor,
+        color: Theme.of(context).cardColor,
         borderRadius:
             BorderRadius.circular(16),
         boxShadow: const [
@@ -89,7 +147,6 @@ class _AlertCard extends StatelessWidget {
             size: 32,
           ),
           const SizedBox(width: 14),
-
           Expanded(
             child: Column(
               crossAxisAlignment:
