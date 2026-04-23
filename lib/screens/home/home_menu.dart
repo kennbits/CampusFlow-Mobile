@@ -94,38 +94,31 @@ class _HomeMenuContentState extends State<_HomeMenuContent> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark =
-        Theme.of(context).brightness == Brightness.dark;
-
-    final bgColor =
-        Theme.of(context).scaffoldBackgroundColor;
-
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = Theme.of(context).scaffoldBackgroundColor;
     final cardColor = Theme.of(context).cardColor;
 
     return Scaffold(
       backgroundColor: bgColor,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: const AssetImage(
-                      'assets/images/bsu.jpg'),
-                  fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(
-                    isDark
-                        ? Colors.black.withOpacity(0.55)
-                        : Colors.white.withOpacity(0.65),
-                    BlendMode.modulate,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: const AssetImage('assets/images/bsu.jpg'),
+                    fit: BoxFit.cover,
+                    colorFilter: ColorFilter.mode(
+                      isDark ? Colors.black.withOpacity(0.55) : Colors.white.withOpacity(0.65),
+                      BlendMode.modulate,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
 
-          SafeArea(
-            child: Column(
+            Column(
               children: [
                 Container(
                   margin: const EdgeInsets.all(14),
@@ -135,19 +128,16 @@ class _HomeMenuContentState extends State<_HomeMenuContent> {
                   ),
                   decoration: BoxDecoration(
                     color: cardColor.withOpacity(0.92),
-                    borderRadius:
-                        BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(18),
                   ),
                   child: Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
                         onTap: widget.onProfileTap,
                         child: CircleAvatar(
                           radius: 24,
-                          backgroundColor:
-                              Colors.redAccent,
+                          backgroundColor: Colors.redAccent,
                           child: const Icon(
                             Icons.person,
                             color: Colors.white,
@@ -166,8 +156,7 @@ class _HomeMenuContentState extends State<_HomeMenuContent> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) =>
-                                      const AlertsPage(),
+                                  builder: (_) => const AlertsPage(),
                                 ),
                               );
                             },
@@ -177,14 +166,12 @@ class _HomeMenuContentState extends State<_HomeMenuContent> {
                             right: 8,
                             top: 8,
                             child: Container(
-                              padding:
-                                  const EdgeInsets.all(4),
+                              padding: const EdgeInsets.all(4),
                               decoration: const BoxDecoration(
                                 color: Colors.red,
                                 shape: BoxShape.circle,
                               ),
-                              constraints:
-                                  const BoxConstraints(
+                              constraints: const BoxConstraints(
                                 minWidth: 18,
                                 minHeight: 18,
                               ),
@@ -194,8 +181,7 @@ class _HomeMenuContentState extends State<_HomeMenuContent> {
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 10,
-                                    fontWeight:
-                                        FontWeight.bold,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ),
@@ -217,8 +203,7 @@ class _HomeMenuContentState extends State<_HomeMenuContent> {
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
                     childAspectRatio: 1.45,
-                    physics:
-                        const NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     children: [
                       _DashboardCard(
                         title: 'Status',
@@ -278,9 +263,7 @@ class _HomeMenuContentState extends State<_HomeMenuContent> {
                 const Spacer(),
 
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(
-                          horizontal: 24),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: SizedBox(
                     width: double.infinity,
                     height: 90,
@@ -289,29 +272,22 @@ class _HomeMenuContentState extends State<_HomeMenuContent> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) =>
-                                const SubmitPage(),
+                            builder: (_) => const SubmitPage(),
                           ),
                         );
                       },
-                      style:
-                          ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Colors.redAccent,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
                         elevation: 12,
-                        shape:
-                            RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(
-                                  50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
                         ),
                       ),
                       child: const Text(
                         'Submit',
                         style: TextStyle(
                           fontSize: 38,
-                          fontWeight:
-                              FontWeight.w900,
+                          fontWeight: FontWeight.w900,
                           color: Colors.white,
                         ),
                       ),
@@ -322,130 +298,104 @@ class _HomeMenuContentState extends State<_HomeMenuContent> {
                 const SizedBox(height: 40),
               ],
             ),
-          ),
 
-          AnimatedBuilder(
-            animation: widget.sidebarController,
-            builder: (context, child) {
-              return IgnorePointer(
-                ignoring:
-                    widget.sidebarController.value <
-                        0.5,
-                child: GestureDetector(
-                  onTap: () {
-                    widget.sidebarController
-                        .reverse();
-                  },
-                  child: Container(
-                    color: Colors.black
-                        .withOpacity(
-                      0.35 *
-                          widget.sidebarController
-                              .value,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-
-          SlideTransition(
-            position: widget.slideAnimation,
-            child: Container(
-              width:
-                  MediaQuery.of(context)
-                          .size
-                          .width *
-                      0.76,
-              decoration: const BoxDecoration(
-                color: Colors.redAccent,
-                borderRadius:
-                    BorderRadius.only(
-                  topRight:
-                      Radius.circular(24),
-                  bottomRight:
-                      Radius.circular(24),
-                ),
-              ),
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding:
-                          const EdgeInsets.all(
-                              20),
-                      child: Row(
-                        children: [
-                          const CircleAvatar(
-                            radius: 28,
-                            backgroundColor:
-                                Colors.white24,
-                            child: Icon(
-                              Icons.person,
-                              color:
-                                  Colors.white,
-                            ),
-                          ),
-                          const SizedBox(
-                              width: 14),
-                          Expanded(
-                            child: Text(
-                              username,
-                              overflow:
-                                  TextOverflow
-                                      .ellipsis,
-                              style:
-                                  const TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
-                                fontWeight:
-                                    FontWeight
-                                        .bold,
-                              ),
-                            ),
-                          ),
-                        ],
+            AnimatedBuilder(
+              animation: widget.sidebarController,
+              builder: (context, child) {
+                return IgnorePointer(
+                  ignoring: widget.sidebarController.value < 0.5,
+                  child: GestureDetector(
+                    onTap: () {
+                      widget.sidebarController.reverse();
+                    },
+                    child: Container(
+                      color: Colors.black.withOpacity(
+                        0.35 * widget.sidebarController.value,
                       ),
                     ),
+                  ),
+                );
+              },
+            ),
 
-                    const Divider(
-                      color: Colors.white30,
-                    ),
+            SlideTransition(
+              position: widget.slideAnimation,
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.76,
+                decoration: const BoxDecoration(
+                  color: Colors.redAccent,
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
+                  ),
+                ),
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Row(
+                          children: [
+                            const CircleAvatar(
+                              radius: 28,
+                              backgroundColor: Colors.white24,
+                              child: Icon(
+                                Icons.person,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Text(
+                                username,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
 
-                    _SidebarMenuItemWithToggle(
-                      icon: Icons.dark_mode,
-                      label: 'Dark Mode',
-                      onTap: () {},
-                    ),
+                      const Divider(
+                        color: Colors.white30,
+                      ),
 
-                    _SidebarMenuItem(
-                      icon: Icons.logout,
-                      label: 'Log Out',
-                      onTap: () async {
-                        await AuthService()
-                            .logout();
+                      _SidebarMenuItemWithToggle(
+                        icon: Icons.dark_mode,
+                        label: 'Dark Mode',
+                        onTap: () {},
+                      ),
 
-                        if (!context.mounted) {
-                          return;
-                        }
+                      _SidebarMenuItem(
+                        icon: Icons.logout,
+                        label: 'Log Out',
+                        onTap: () async {
+                          await AuthService().logout();
 
-                        Navigator
-                            .pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                const LoginScreen(),
-                          ),
-                          (route) => false,
-                        );
-                      },
-                    ),
-                  ],
+                          if (!context.mounted) {
+                            return;
+                          }
+
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const LoginScreen(),
+                            ),
+                            (route) => false,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

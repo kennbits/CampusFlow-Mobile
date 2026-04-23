@@ -27,10 +27,10 @@ flutter:
     - assets/images/banner.png
     - assets/images/fade-bg.jpg
     - assets/images/bsu.jpg
-    - assets/images/app-logo.png
+    - assets/images/cf-icon.png
 
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/images/app-logo.png"
+  image_path: "assets/images/cf-icon.png"
   adaptive_icon_background: "#FFFFFF"
