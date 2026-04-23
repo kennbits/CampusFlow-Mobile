@@ -1,42 +1,104 @@
 import 'package:flutter/material.dart';
+import '../../services/api_service.dart';
 
-class HistoryPage extends StatelessWidget {
+class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
+
+  @override
+  State<HistoryPage> createState() => _HistoryPageState();
+}
+
+class _HistoryPageState extends State<HistoryPage> {
+  List<dynamic> items = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadHistory();
+  }
+
+  Future<void> loadHistory() async {
+    try {
+      final data = await ApiService.getHistory();
+
+      if (!mounted) return;
+
+      setState(() {
+        items = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> refreshData() async {
+    await loadHistory();
+  }
+
+  IconData getIcon(String action) {
+    final text = action.toLowerCase();
+
+    if (text.contains('water')) {
+      return Icons.water_drop;
+    }
+
+    if (text.contains('electric')) {
+      return Icons.bolt;
+    }
+
+    if (text.contains('waste')) {
+      return Icons.delete;
+    }
+
+    return Icons.history;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          AppBar(title: const Text('History')),
-      body: ListView(
-        padding:
-            const EdgeInsets.all(16),
-        children: const [
-          _HistoryCard(
-            title: 'Water Reading',
-            location: 'Deep Well 1',
-            date: 'Apr 22, 2026',
-            value: '1250',
-            icon: Icons.water_drop,
-          ),
-          SizedBox(height: 12),
-          _HistoryCard(
-            title: 'Electric Reading',
-            location: 'SSC',
-            date: 'Apr 22, 2026',
-            value: '4200',
-            icon: Icons.bolt,
-          ),
-          SizedBox(height: 12),
-          _HistoryCard(
-            title: 'Waste Submission',
-            location: 'Residual',
-            date: 'Apr 21, 2026',
-            value: '8 Bags',
-            icon: Icons.delete,
-          ),
-        ],
+      appBar: AppBar(
+        title: const Text('History'),
       ),
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : items.isEmpty
+              ? const Center(
+                  child: Text('No history found'),
+                )
+              : RefreshIndicator(
+                  onRefresh: refreshData,
+                  child: ListView.separated(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: items.length,
+                    separatorBuilder: (_, __) =>
+                        const SizedBox(height: 12),
+                    itemBuilder: (context, i) {
+                      final item = items[i];
+
+                      return _HistoryCard(
+                        title:
+                            item['action'] ?? '',
+                        location:
+                            item['details'] ?? '',
+                        date:
+                            item['created_at'] ?? '',
+                        value:
+                            '#${item['id']}',
+                        icon: getIcon(
+                          item['action'] ?? '',
+                        ),
+                      );
+                    },
+                  ),
+                ),
     );
   }
 }
@@ -59,11 +121,9 @@ class _HistoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding:
-          const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color:
-            Theme.of(context).cardColor,
+        color: Theme.of(context).cardColor,
         borderRadius:
             BorderRadius.circular(16),
         boxShadow: const [
@@ -81,7 +141,6 @@ class _HistoryCard extends StatelessWidget {
             size: 34,
           ),
           const SizedBox(width: 14),
-
           Expanded(
             child: Column(
               crossAxisAlignment:
@@ -98,11 +157,15 @@ class _HistoryCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(location),
-                Text(date),
+                Text(
+                  date,
+                  maxLines: 1,
+                  overflow:
+                      TextOverflow.ellipsis,
+                ),
               ],
             ),
           ),
-
           Text(
             value,
             style: const TextStyle(
