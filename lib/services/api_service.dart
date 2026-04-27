@@ -3,8 +3,7 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   // localhost for same PC testing
-  static const String baseUrl =
-      'http://172.16.150.140:8000/api';
+  static const String baseUrl = 'http://172.16.150.140:8000/api';
 
   // status
   static Future<dynamic> getStatus() async {
