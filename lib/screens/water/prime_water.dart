@@ -2,67 +2,110 @@ import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
 
 class PrimeWaterPage extends StatelessWidget {
-  const PrimeWaterPage({Key? key})
-    : super(key: key);
+  const PrimeWaterPage({super.key});
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
+    final isDark =
+        Theme.of(context).brightness ==
+            Brightness.dark;
+
     return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding:
-              const EdgeInsets.all(
-                8,
-              ),
-          child: Container(
-            decoration:
-                const BoxDecoration(
-                  shape:
-                      BoxShape.circle,
-                  color: Color(
-                    0xFFE63946,
-                  ),
-                ),
-            child: IconButton(
-              icon: const Icon(
-                Icons.arrow_back,
-                color:
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: isDark
+                ? const [
+                    Color(0xFF111111),
+                    Color(0xFF1A1A1A),
+                  ]
+                : const [
+                    Color(0xFFF6F7FB),
                     Colors.white,
-              ),
-              onPressed:
-                  () =>
-                      Navigator.pop(
-                        context,
+                  ],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.all(
+                        18),
+                child: Row(
+                  children: [
+                    InkWell(
+                      borderRadius:
+                          BorderRadius
+                              .circular(
+                                  50),
+                      onTap: () =>
+                          Navigator.pop(
+                              context),
+                      child: Container(
+                        width: 48,
+                        height: 48,
+                        decoration:
+                            const BoxDecoration(
+                          color: Color(
+                            0xFFED1B2F,
+                          ),
+                          shape: BoxShape
+                              .circle,
+                        ),
+                        child:
+                            const Icon(
+                          Icons
+                              .arrow_back,
+                          color: Colors
+                              .white,
+                        ),
                       ),
-            ),
+                    ),
+
+                    const Expanded(
+                      child: Center(
+                        child: Text(
+                          'PRIME WATER',
+                          style:
+                              TextStyle(
+                            fontSize:
+                                26,
+                            fontWeight:
+                                FontWeight
+                                    .w700,
+                            color: Color(
+                              0xFFED1B2F,
+                            ),
+                            letterSpacing:
+                                1,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(
+                        width: 48),
+                  ],
+                ),
+              ),
+
+              const Expanded(
+                child:
+                    WaterSourceBody(
+                  sourceName:
+                      'Prime Water',
+                ),
+              ),
+            ],
           ),
         ),
-        title: const Text(
-          'PRIME WATER',
-          style: TextStyle(
-            color: Color(
-              0xFFE63946,
-            ),
-            fontWeight:
-                FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor:
-            Colors.transparent,
-        elevation: 0,
       ),
-      body:
-          const WaterSourceBody(
-            sourceName: 'Prime Water',
-          ),
     );
   }
 }
-
 
 class WaterSourceBody extends StatefulWidget {
   final String sourceName;
@@ -74,12 +117,13 @@ class WaterSourceBody extends StatefulWidget {
 
   @override
   State<WaterSourceBody>
-  createState() =>
-      _WaterSourceBodyState();
+      createState() =>
+          _WaterSourceBodyState();
 }
 
 class _WaterSourceBodyState
-    extends State<WaterSourceBody> {
+    extends State<
+        WaterSourceBody> {
   final readingController =
       TextEditingController();
 
@@ -96,9 +140,8 @@ class _WaterSourceBodyState
         context,
       ).showSnackBar(
         const SnackBar(
-          content: Text(
-            'Enter reading',
-          ),
+          content:
+              Text('Enter reading'),
         ),
       );
       return;
@@ -111,9 +154,14 @@ class _WaterSourceBodyState
     try {
       await ApiService.storeReading(
         module: 'water',
-        sourceName: widget.sourceName,
-        reading: readingController.text.trim(),
-        remarks: remarksController.text.trim(),
+        sourceName:
+            widget.sourceName,
+        reading:
+            readingController.text
+                .trim(),
+        remarks:
+            remarksController.text
+                .trim(),
       );
 
       if (!mounted) return;
@@ -137,9 +185,8 @@ class _WaterSourceBodyState
         context,
       ).showSnackBar(
         const SnackBar(
-          content: Text(
-            'Submit failed',
-          ),
+          content:
+              Text('Submit failed'),
         ),
       );
     }
@@ -160,13 +207,11 @@ class _WaterSourceBodyState
 
   @override
   Widget build(
-    BuildContext context,
-  ) {
+      BuildContext context) {
     return ListView(
       padding:
           const EdgeInsets.all(
-            18,
-          ),
+              20),
       children: [
         _SectionCard(
           title: 'Reading',
@@ -178,84 +223,78 @@ class _WaterSourceBodyState
                       readingController,
                   keyboardType:
                       const TextInputType.numberWithOptions(
-                        decimal:
-                            true,
-                      ),
+                    decimal:
+                        true,
+                  ),
                   decoration:
-                      InputDecoration(
-                        hintText:
-                            'Enter reading',
-                        border:
-                            OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.circular(
-                                    12,
-                                  ),
-                            ),
-                      ),
+                      const InputDecoration(
+                    hintText:
+                        'Enter reading',
+                  ),
                 ),
               ),
               const SizedBox(
-                width: 10,
-              ),
+                  width: 10),
               const Text(
                 'm³',
+                style:
+                    TextStyle(
+                  fontWeight:
+                      FontWeight
+                          .w600,
+                ),
               ),
             ],
           ),
         ),
 
         const SizedBox(
-          height: 16,
-        ),
+            height: 16),
 
         _SectionCard(
           title: 'Photo',
-          child: Center(
-            child: SizedBox(
-              height: 46,
-              child:
-                  ElevatedButton.icon(
-                    onPressed:
-                        () {},
-                    icon:
-                        const Icon(
-                          Icons
-                              .camera_alt,
-                          color:
-                              Colors.white,
-                        ),
-                    label:
-                        const Text(
-                          'Upload Photo',
-                          style:
-                              TextStyle(
-                                color:
-                                    Colors.white,
-                                fontWeight:
-                                    FontWeight.bold,
-                              ),
-                        ),
-                    style:
-                        ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Colors.redAccent,
-                          shape:
-                              RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(
-                                      14,
-                                    ),
-                              ),
-                        ),
-                  ),
+          child: SizedBox(
+            width:
+                double.infinity,
+            height: 52,
+            child:
+                ElevatedButton.icon(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.camera_alt,
+                color:
+                    Colors.white,
+              ),
+              label: const Text(
+                'Upload Photo',
+                style:
+                    TextStyle(
+                  color: Colors
+                      .white,
+                  fontWeight:
+                      FontWeight
+                          .w700,
+                ),
+              ),
+              style:
+                  ElevatedButton.styleFrom(
+                backgroundColor:
+                    const Color(
+                  0xFFED1B2F,
+                ),
+                shape:
+                    RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(
+                          16),
+                ),
+              ),
             ),
           ),
         ),
 
         const SizedBox(
-          height: 16,
-        ),
+            height: 16),
 
         _SectionCard(
           title: 'Remarks',
@@ -265,68 +304,61 @@ class _WaterSourceBodyState
             minLines: 5,
             maxLines: 7,
             decoration:
-                InputDecoration(
-                  hintText:
-                      'Enter remarks',
-                  border:
-                      OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(
-                              12,
-                            ),
-                      ),
-                ),
+                const InputDecoration(
+              hintText:
+                  'Enter remarks',
+            ),
           ),
         ),
 
         const SizedBox(
-          height: 24,
-        ),
+            height: 24),
 
         SizedBox(
-          height: 56,
+          height: 58,
           child:
               ElevatedButton(
-                style:
-                    ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Colors.redAccent,
-                      elevation:
-                          10,
-                      shadowColor:
-                          Colors.black26,
-                      shape:
-                          RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(
-                                  18,
-                                ),
-                          ),
-                    ),
-                onPressed:
-                    isLoading
-                        ? null
-                        : submitData,
-                child:
-                    isLoading
-                        ? const CircularProgressIndicator(
-                          color:
-                              Colors.white,
-                        )
-                        : const Text(
-                          'Submit',
-                          style:
-                              TextStyle(
-                                fontSize:
-                                    18,
-                                color:
-                                    Colors.white,
-                                fontWeight:
-                                    FontWeight.bold,
-                              ),
-                        ),
+            onPressed:
+                isLoading
+                    ? null
+                    : submitData,
+            style:
+                ElevatedButton.styleFrom(
+              backgroundColor:
+                  const Color(
+                0xFFED1B2F,
               ),
+              elevation: 8,
+              shape:
+                  RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(
+                        18),
+              ),
+            ),
+            child: isLoading
+                ? const CircularProgressIndicator(
+                    color: Colors
+                        .white,
+                  )
+                : const Text(
+                    'Submit',
+                    style:
+                        TextStyle(
+                      fontSize:
+                          18,
+                      fontWeight:
+                          FontWeight
+                              .w700,
+                      color: Colors
+                          .white,
+                    ),
+                  ),
+          ),
         ),
+
+        const SizedBox(
+            height: 24),
       ],
     );
   }
@@ -344,26 +376,24 @@ class _SectionCard
 
   @override
   Widget build(
-    BuildContext context,
-  ) {
+      BuildContext context) {
     return Container(
       padding:
           const EdgeInsets.all(
-            16,
-          ),
-      decoration: BoxDecoration(
-        color:
-            Theme.of(context)
-                .cardColor,
+              18),
+      decoration:
+          BoxDecoration(
+        color: Colors.white,
         borderRadius:
             BorderRadius.circular(
-              18,
-            ),
+                24),
         boxShadow: const [
           BoxShadow(
-            blurRadius: 8,
             color:
                 Colors.black12,
+            blurRadius: 18,
+            offset:
+                Offset(0, 8),
           ),
         ],
       ),
@@ -376,16 +406,17 @@ class _SectionCard
             title,
             style:
                 const TextStyle(
-                  fontSize: 16,
-                  fontWeight:
-                      FontWeight.bold,
-                  color:
-                      Colors.redAccent,
-                ),
+              fontSize: 18,
+              fontWeight:
+                  FontWeight
+                      .w700,
+              color: Color(
+                0xFFED1B2F,
+              ),
+            ),
           ),
           const SizedBox(
-            height: 12,
-          ),
+              height: 14),
           child,
         ],
       ),
