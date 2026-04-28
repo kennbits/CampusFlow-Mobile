@@ -5,9 +5,9 @@ class MeterFormPage extends StatefulWidget {
   final String title;
 
   const MeterFormPage({
-    Key? key,
+    super.key,
     required this.title,
-  }) : super(key: key);
+  });
 
   @override
   State<MeterFormPage> createState() =>
@@ -42,9 +42,8 @@ class _MeterFormPageState
       ScaffoldMessenger.of(context)
           .showSnackBar(
         const SnackBar(
-          content: Text(
-            'Enter reading',
-          ),
+          content:
+              Text('Enter reading'),
         ),
       );
       return;
@@ -81,9 +80,8 @@ class _MeterFormPageState
       ScaffoldMessenger.of(context)
           .showSnackBar(
         const SnackBar(
-          content: Text(
-            'Submit failed',
-          ),
+          content:
+              Text('Submit failed'),
         ),
       );
     }
@@ -97,193 +95,257 @@ class _MeterFormPageState
 
   @override
   Widget build(BuildContext context) {
-    final bgColor =
-        Theme.of(context)
-            .scaffoldBackgroundColor;
+    final isDark =
+        Theme.of(context).brightness ==
+            Brightness.dark;
 
     return Scaffold(
-      backgroundColor: bgColor,
-      appBar: AppBar(
-        backgroundColor: bgColor,
-        elevation: 0,
-        leading: Padding(
-          padding:
-              const EdgeInsets.all(8),
-          child: Container(
-            decoration:
-                const BoxDecoration(
-              color:
-                  Colors.redAccent,
-              shape:
-                  BoxShape.circle,
-            ),
-            child: IconButton(
-              icon: const Icon(
-                Icons.arrow_back,
-                color:
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: isDark
+                ? const [
+                    Color(0xFF111111),
+                    Color(0xFF1A1A1A),
+                  ]
+                : const [
+                    Color(0xFFF6F7FB),
                     Colors.white,
-              ),
-              onPressed: () =>
-                  Navigator.pop(
-                      context),
-            ),
+                  ],
           ),
         ),
-        title: Text(
-          widget.title,
-          style:
-              const TextStyle(
-            color:
-                Colors.redAccent,
-            fontWeight:
-                FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: ListView(
-        padding:
-            const EdgeInsets.all(18),
-        children: [
-          _SectionCard(
-            title: 'Reading',
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller:
-                        readingController,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    decoration:
-                        InputDecoration(
-                      hintText:
-                          'Enter reading',
-                      border:
-                          OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(
-                                12),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                    width: 10),
-                const Text('kW'),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          _SectionCard(
-            title: 'Photo',
-            child: Center(
-              child: SizedBox(
-                height: 46,
-                child:
-                    ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.camera_alt,
-                    color:
-                        Colors.white,
-                  ),
-                  label: const Text(
-                    'Upload Photo',
-                    style: TextStyle(
-                      color:
-                          Colors.white,
-                      fontWeight:
-                          FontWeight.bold,
-                    ),
-                  ),
-                  style:
-                      ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Colors.redAccent,
-                    shape:
-                        RoundedRectangleBorder(
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.all(
+                        18),
+                child: Row(
+                  children: [
+                    InkWell(
                       borderRadius:
-                          BorderRadius.circular(
-                              14),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          _SectionCard(
-            title: 'Remarks',
-            child: TextField(
-              controller:
-                  remarksController,
-              minLines: 5,
-              maxLines: 7,
-              decoration:
-                  InputDecoration(
-                hintText:
-                    'Enter remarks',
-                border:
-                    OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                          12),
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(
-              height: 24),
-
-          SizedBox(
-            height: 56,
-            child:
-                ElevatedButton(
-              onPressed:
-                  isLoading
-                      ? null
-                      : submit,
-              style:
-                  ElevatedButton.styleFrom(
-                backgroundColor:
-                    Colors.redAccent,
-                elevation: 10,
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                          18),
-                ),
-              ),
-              child:
-                  isLoading
-                      ? const CircularProgressIndicator(
-                        color:
-                            Colors.white,
-                      )
-                      : const Text(
-                        'Submit',
-                        style:
-                            TextStyle(
-                          color:
-                              Colors.white,
-                          fontSize: 18,
-                          fontWeight:
-                              FontWeight.bold,
+                          BorderRadius
+                              .circular(
+                                  50),
+                      onTap: () =>
+                          Navigator.pop(
+                              context),
+                      child: Container(
+                        width: 48,
+                        height: 48,
+                        decoration:
+                            const BoxDecoration(
+                          color: Color(
+                            0xFFED1B2F,
+                          ),
+                          shape: BoxShape
+                              .circle,
+                        ),
+                        child:
+                            const Icon(
+                          Icons
+                              .arrow_back,
+                          color: Colors
+                              .white,
                         ),
                       ),
-            ),
+                    ),
+
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          widget.title,
+                          style:
+                              const TextStyle(
+                            fontSize:
+                                26,
+                            fontWeight:
+                                FontWeight
+                                    .w700,
+                            color: Color(
+                              0xFFED1B2F,
+                            ),
+                            letterSpacing:
+                                1,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(
+                        width: 48),
+                  ],
+                ),
+              ),
+
+              Expanded(
+                child: ListView(
+                  padding:
+                      const EdgeInsets
+                          .all(20),
+                  children: [
+                    _SectionCard(
+                      title:
+                          'Reading',
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child:
+                                TextField(
+                              controller:
+                                  readingController,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                decimal:
+                                    true,
+                              ),
+                              decoration:
+                                  const InputDecoration(
+                                hintText:
+                                    'Enter reading',
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                              width:
+                                  10),
+                          const Text(
+                            'kW',
+                            style:
+                                TextStyle(
+                              fontWeight:
+                                  FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(
+                        height: 16),
+
+                    _SectionCard(
+                      title:
+                          'Photo',
+                      child: SizedBox(
+                        width: double
+                            .infinity,
+                        height: 52,
+                        child:
+                            ElevatedButton.icon(
+                          onPressed:
+                              () {},
+                          icon:
+                              const Icon(
+                            Icons
+                                .camera_alt,
+                            color: Colors
+                                .white,
+                          ),
+                          label:
+                              const Text(
+                            'Upload Photo',
+                            style:
+                                TextStyle(
+                              color: Colors
+                                  .white,
+                              fontWeight:
+                                  FontWeight.w700,
+                            ),
+                          ),
+                          style:
+                              ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color(
+                              0xFFED1B2F,
+                            ),
+                            shape:
+                                RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(
+                                      16),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(
+                        height: 16),
+
+                    _SectionCard(
+                      title:
+                          'Remarks',
+                      child:
+                          TextField(
+                        controller:
+                            remarksController,
+                        minLines: 5,
+                        maxLines: 7,
+                        decoration:
+                            const InputDecoration(
+                          hintText:
+                              'Enter remarks',
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(
+                        height: 24),
+
+                    SizedBox(
+                      height: 58,
+                      child:
+                          ElevatedButton(
+                        onPressed:
+                            isLoading
+                                ? null
+                                : submit,
+                        style:
+                            ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color(
+                            0xFFED1B2F,
+                          ),
+                          elevation:
+                              8,
+                          shape:
+                              RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(
+                                    18),
+                          ),
+                        ),
+                        child: isLoading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            : const Text(
+                                'Submit',
+                                style:
+                                    TextStyle(
+                                  fontSize:
+                                      18,
+                                  fontWeight:
+                                      FontWeight.w700,
+                                  color:
+                                      Colors.white,
+                                ),
+                              ),
+                      ),
+                    ),
+
+                    const SizedBox(
+                        height: 24),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -300,42 +362,48 @@ class _SectionCard
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+      BuildContext context) {
     return Container(
       padding:
-          const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color:
-            Theme.of(context)
-                .cardColor,
+          const EdgeInsets.all(
+              18),
+      decoration:
+          BoxDecoration(
+        color: Colors.white,
         borderRadius:
             BorderRadius.circular(
-                18),
+                24),
         boxShadow: const [
           BoxShadow(
-            blurRadius: 8,
             color:
                 Colors.black12,
+            blurRadius: 18,
+            offset:
+                Offset(0, 8),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment:
-            CrossAxisAlignment.start,
+            CrossAxisAlignment
+                .start,
         children: [
           Text(
             title,
             style:
                 const TextStyle(
-              color:
-                  Colors.redAccent,
+              fontSize: 18,
               fontWeight:
-                  FontWeight.bold,
-              fontSize: 16,
+                  FontWeight
+                      .w700,
+              color: Color(
+                0xFFED1B2F,
+              ),
             ),
           ),
           const SizedBox(
-              height: 12),
+              height: 14),
           child,
         ],
       ),

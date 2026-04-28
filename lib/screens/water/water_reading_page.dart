@@ -10,87 +10,119 @@ class WaterReadingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bgColor =
-        Theme.of(context)
-            .scaffoldBackgroundColor;
-
-    final cardColor =
-        Theme.of(context).cardColor;
-
-    final textColor =
-        Theme.of(context)
-            .textTheme
-            .bodyLarge
-            ?.color ??
-        Colors.black;
+    final isDark =
+        Theme.of(context).brightness ==
+            Brightness.dark;
 
     return Scaffold(
-      backgroundColor: bgColor,
-      appBar: AppBar(
-        backgroundColor: bgColor,
-        elevation: 0,
-        leading: Padding(
-          padding:
-              const EdgeInsets.all(8),
-          child: Container(
-            decoration:
-                const BoxDecoration(
-              color: Colors.redAccent,
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              icon: const Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-              ),
-              onPressed: () =>
-                  Navigator.pop(context),
-            ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: isDark
+                ? const [
+                    Color(0xFF111111),
+                    Color(0xFF1A1A1A),
+                  ]
+                : const [
+                    Color(0xFFF6F7FB),
+                    Colors.white,
+                  ],
           ),
         ),
-        title: const Text(
-          'WATER',
-          style: TextStyle(
-            color: Colors.redAccent,
-            fontWeight:
-                FontWeight.bold,
-            fontSize: 22,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              padding:
-                  const EdgeInsets.all(16),
-              color: cardColor,
-              child: Center(
-                child: Text(
-                  'SELECT WATER SOURCE',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight:
-                        FontWeight.w600,
-                    color: textColor,
-                  ),
-                ),
-              ),
-            ),
-
-            Expanded(
-              child: ListView(
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              Padding(
                 padding:
                     const EdgeInsets.all(
                         18),
-                children: [
-                  SizedBox(
-                    height: 95,
-                    child:
-                        _WaterMenuButton(
-                      label:
+                child: Row(
+                  children: [
+                    InkWell(
+                      borderRadius:
+                          BorderRadius
+                              .circular(
+                                  50),
+                      onTap: () =>
+                          Navigator.pop(
+                              context),
+                      child: Container(
+                        width: 48,
+                        height: 48,
+                        decoration:
+                            const BoxDecoration(
+                          color: Color(
+                            0xFFED1B2F,
+                          ),
+                          shape: BoxShape
+                              .circle,
+                        ),
+                        child:
+                            const Icon(
+                          Icons
+                              .arrow_back,
+                          color: Colors
+                              .white,
+                        ),
+                      ),
+                    ),
+
+                    const Expanded(
+                      child: Center(
+                        child: Text(
+                          'WATER',
+                          style:
+                              TextStyle(
+                            fontSize:
+                                28,
+                            fontWeight:
+                                FontWeight
+                                    .w700,
+                            color: Color(
+                              0xFFED1B2F,
+                            ),
+                            letterSpacing:
+                                1,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(
+                        width: 48),
+                  ],
+                ),
+              ),
+
+              const SizedBox(
+                  height: 6),
+
+              const Text(
+                'Choose Water Source',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.black54,
+                  fontWeight:
+                      FontWeight.w500,
+                ),
+              ),
+
+              const SizedBox(
+                  height: 22),
+
+              Expanded(
+                child: ListView(
+                  padding:
+                      const EdgeInsets
+                          .symmetric(
+                    horizontal: 20,
+                  ),
+                  children: [
+                    _WaterCard(
+                      title:
                           'Prime Water',
                       onTap: () {
                         Navigator.push(
@@ -102,16 +134,12 @@ class WaterReadingPage extends StatelessWidget {
                         );
                       },
                     ),
-                  ),
 
-                  const SizedBox(
-                      height: 14),
+                    const SizedBox(
+                        height: 16),
 
-                  SizedBox(
-                    height: 95,
-                    child:
-                        _WaterMenuButton(
-                      label:
+                    _WaterCard(
+                      title:
                           'Deep Well 1',
                       onTap: () {
                         Navigator.push(
@@ -123,16 +151,12 @@ class WaterReadingPage extends StatelessWidget {
                         );
                       },
                     ),
-                  ),
 
-                  const SizedBox(
-                      height: 14),
+                    const SizedBox(
+                        height: 16),
 
-                  SizedBox(
-                    height: 95,
-                    child:
-                        _WaterMenuButton(
-                      label:
+                    _WaterCard(
+                      title:
                           'Deep Well 2',
                       onTap: () {
                         Navigator.push(
@@ -144,16 +168,12 @@ class WaterReadingPage extends StatelessWidget {
                         );
                       },
                     ),
-                  ),
 
-                  const SizedBox(
-                      height: 14),
+                    const SizedBox(
+                        height: 16),
 
-                  SizedBox(
-                    height: 95,
-                    child:
-                        _WaterMenuButton(
-                      label:
+                    _WaterCard(
+                      title:
                           'Deep Well 3',
                       onTap: () {
                         Navigator.push(
@@ -165,16 +185,12 @@ class WaterReadingPage extends StatelessWidget {
                         );
                       },
                     ),
-                  ),
 
-                  const SizedBox(
-                      height: 14),
+                    const SizedBox(
+                        height: 16),
 
-                  SizedBox(
-                    height: 95,
-                    child:
-                        _WaterMenuButton(
-                      label:
+                    _WaterCard(
+                      title:
                           'Deep Well 4',
                       onTap: () {
                         Navigator.push(
@@ -186,69 +202,97 @@ class WaterReadingPage extends StatelessWidget {
                         );
                       },
                     ),
-                  ),
-                ],
+
+                    const SizedBox(
+                        height: 24),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _WaterMenuButton extends StatelessWidget {
-  final String label;
+class _WaterCard extends StatelessWidget {
+  final String title;
   final VoidCallback onTap;
 
-  const _WaterMenuButton({
-    required this.label,
+  const _WaterCard({
+    required this.title,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 74,
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.redAccent,
-          elevation: 10,
-          shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(24),
-          ),
+    return InkWell(
+      borderRadius:
+          BorderRadius.circular(
+              24),
+      onTap: onTap,
+      child: Container(
+        padding:
+            const EdgeInsets.all(
+                18),
+        decoration:
+            BoxDecoration(
+          color: Colors.white,
+          borderRadius:
+              BorderRadius
+                  .circular(24),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 18,
+              offset:
+                  Offset(0, 8),
+            ),
+          ],
         ),
         child: Row(
           children: [
-            const CircleAvatar(
-              radius: 22,
-              backgroundColor:
-                  Colors.white24,
-              child: Icon(
+            Container(
+              width: 62,
+              height: 62,
+              decoration:
+                  const BoxDecoration(
+                color: Color(
+                  0xFFEAF3FF,
+                ),
+                shape:
+                    BoxShape.circle,
+              ),
+              child: const Icon(
                 Icons.water_drop,
-                color: Colors.white,
+                color: Colors.blue,
+                size: 30,
               ),
             ),
 
-            const SizedBox(width: 14),
+            const SizedBox(
+                width: 16),
 
             Expanded(
               child: Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 26,
+                title,
+                style:
+                    const TextStyle(
+                  fontSize: 23,
                   fontWeight:
-                      FontWeight.bold,
-                  color: Colors.white,
+                      FontWeight.w700,
                 ),
               ),
             ),
 
             const Icon(
-              Icons.chevron_right,
-              color: Colors.white,
+              Icons
+                  .arrow_forward_ios,
+              size: 18,
+              color: Color(
+                0xFFED1B2F,
+              ),
             ),
           ],
         ),

@@ -12,88 +12,125 @@ class SubmitPage extends StatelessWidget {
         Theme.of(context).brightness ==
             Brightness.dark;
 
-    final bgColor =
-        Theme.of(context).scaffoldBackgroundColor;
-
-    final cardColor =
-        Theme.of(context).cardColor;
-
-    final textColor =
-        Theme.of(context)
-            .textTheme
-            .bodyLarge
-            ?.color ??
-        Colors.black;
-
     return Scaffold(
-      backgroundColor: bgColor,
-      appBar: AppBar(
-        backgroundColor: bgColor,
-        elevation: 0,
-        leading: Padding(
-          padding:
-              const EdgeInsets.all(8),
-          child: Container(
-            decoration:
-                const BoxDecoration(
-              color: Colors.redAccent,
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              icon: const Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-              ),
-              onPressed: () =>
-                  Navigator.pop(context),
-            ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: isDark
+                ? const [
+                    Color(0xFF111111),
+                    Color(0xFF1A1A1A),
+                  ]
+                : const [
+                    Color(0xFFF6F7FB),
+                    Colors.white,
+                  ],
           ),
         ),
-        title: const Text(
-          'SUBMIT',
-          style: TextStyle(
-            color: Colors.redAccent,
-            fontWeight:
-                FontWeight.bold,
-            fontSize: 28,
-            letterSpacing: 2,
-          ),
-        ),
-        centerTitle: true,
-      ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              Padding(
+                padding:
+                    const EdgeInsets.all(
+                        18),
+                child: Row(
+                  children: [
+                    InkWell(
+                      borderRadius:
+                          BorderRadius
+                              .circular(
+                                  50),
+                      onTap: () =>
+                          Navigator.pop(
+                              context),
+                      child: Container(
+                        width: 48,
+                        height: 48,
+                        decoration:
+                            const BoxDecoration(
+                          color: Color(
+                            0xFFED1B2F,
+                          ),
+                          shape: BoxShape
+                              .circle,
+                        ),
+                        child:
+                            const Icon(
+                          Icons
+                              .arrow_back,
+                          color: Colors
+                              .white,
+                        ),
+                      ),
+                    ),
 
-      body: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              padding:
-                  const EdgeInsets.all(16),
-              color: cardColor,
-              child: Center(
-                child: Text(
-                  'SELECT SUBMISSION TYPE',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight:
-                        FontWeight.w600,
-                    color: textColor,
-                  ),
+                    const Expanded(
+                      child: Center(
+                        child: Text(
+                          'SUBMIT',
+                          style:
+                              TextStyle(
+                            fontSize:
+                                30,
+                            fontWeight:
+                                FontWeight
+                                    .w700,
+                            letterSpacing:
+                                1,
+                            color: Color(
+                              0xFFED1B2F,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(
+                        width: 48),
+                  ],
                 ),
               ),
-            ),
 
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(18),
-                children: [
-                  SizedBox(
-                    height: 110,
-                    child: _SubmitMenuButton(
-                      icon: Icons.water_drop,
-                      iconColor: Colors.blue,
-                      label: 'Water',
-                      textColor: Colors.white,
+              const SizedBox(
+                  height: 8),
+
+              const Text(
+                'Choose Submission Type',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.black54,
+                  fontWeight:
+                      FontWeight.w500,
+                ),
+              ),
+
+              const SizedBox(
+                  height: 22),
+
+              Expanded(
+                child: ListView(
+                  padding:
+                      const EdgeInsets
+                          .symmetric(
+                    horizontal: 20,
+                  ),
+                  children: [
+                    _SubmitCard(
+                      title: 'Water',
+                      subtitle:
+                          'Submit water reading',
+                      icon: Icons
+                          .water_drop,
+                      iconBg:
+                          const Color(
+                        0xFFEAF3FF,
+                      ),
+                      iconColor:
+                          Colors.blue,
                       onTap: () {
                         Navigator.push(
                           context,
@@ -104,17 +141,23 @@ class SubmitPage extends StatelessWidget {
                         );
                       },
                     ),
-                  ),
 
-                  const SizedBox(height: 16),
+                    const SizedBox(
+                        height: 16),
 
-                  SizedBox(
-                    height: 110,
-                    child: _SubmitMenuButton(
-                      icon: Icons.flash_on,
-                      iconColor: Colors.amber,
-                      label: 'Electric',
-                      textColor: Colors.white,
+                    _SubmitCard(
+                      title:
+                          'Electric',
+                      subtitle:
+                          'Submit electric reading',
+                      icon: Icons
+                          .bolt,
+                      iconBg:
+                          const Color(
+                        0xFFFFF4E5,
+                      ),
+                      iconColor:
+                          Colors.orange,
                       onTap: () {
                         Navigator.push(
                           context,
@@ -125,17 +168,22 @@ class SubmitPage extends StatelessWidget {
                         );
                       },
                     ),
-                  ),
 
-                  const SizedBox(height: 16),
+                    const SizedBox(
+                        height: 16),
 
-                  SizedBox(
-                    height: 110,
-                    child: _SubmitMenuButton(
-                      icon: Icons.delete,
-                      iconColor: Colors.black,
-                      label: 'Waste',
-                      textColor: Colors.white,
+                    _SubmitCard(
+                      title: 'Waste',
+                      subtitle:
+                          'Submit waste report',
+                      icon: Icons
+                          .delete_outline,
+                      iconBg:
+                          const Color(
+                        0xFFEAF8EC,
+                      ),
+                      iconColor:
+                          Colors.green,
                       onTap: () {
                         Navigator.push(
                           context,
@@ -146,81 +194,129 @@ class SubmitPage extends StatelessWidget {
                         );
                       },
                     ),
-                  ),
-                ],
+
+                    const SizedBox(
+                        height: 24),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _SubmitMenuButton extends StatelessWidget {
+class _SubmitCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
   final IconData icon;
+  final Color iconBg;
   final Color iconColor;
-  final String label;
-  final Color textColor;
   final VoidCallback onTap;
 
-  const _SubmitMenuButton({
+  const _SubmitCard({
+    required this.title,
+    required this.subtitle,
     required this.icon,
+    required this.iconBg,
     required this.iconColor,
-    required this.label,
-    required this.textColor,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onTap,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.redAccent,
-        elevation: 12,
-        shadowColor: Colors.black38,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 18,
-        ),
-        shape: RoundedRectangleBorder(
+    return InkWell(
+      borderRadius:
+          BorderRadius.circular(
+              24),
+      onTap: onTap,
+      child: Container(
+        padding:
+            const EdgeInsets.all(
+                18),
+        decoration:
+            BoxDecoration(
+          color: Colors.white,
           borderRadius:
-              BorderRadius.circular(26),
-        ),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 24,
-            backgroundColor:
-                Colors.white24,
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 28,
+              BorderRadius
+                  .circular(24),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 18,
+              offset:
+                  Offset(0, 8),
             ),
-          ),
-
-          const SizedBox(width: 16),
-
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight:
-                    FontWeight.bold,
-                color: Colors.white,
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 62,
+              height: 62,
+              decoration:
+                  BoxDecoration(
+                color: iconBg,
+                shape: BoxShape
+                    .circle,
+              ),
+              child: Icon(
+                icon,
+                color:
+                    iconColor,
+                size: 30,
               ),
             ),
-          ),
 
-          const Icon(
-            Icons.chevron_right,
-            color: Colors.white,
-            size: 30,
-          ),
-        ],
+            const SizedBox(
+                width: 16),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment
+                        .start,
+                children: [
+                  Text(
+                    title,
+                    style:
+                        const TextStyle(
+                      fontSize:
+                          24,
+                      fontWeight:
+                          FontWeight
+                              .w700,
+                    ),
+                  ),
+                  const SizedBox(
+                      height:
+                          4),
+                  Text(
+                    subtitle,
+                    style:
+                        const TextStyle(
+                      fontSize:
+                          13,
+                      color: Colors
+                          .black54,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const Icon(
+              Icons
+                  .arrow_forward_ios,
+              size: 18,
+              color: Color(
+                0xFFED1B2F,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
