@@ -3,70 +3,78 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  static const String _loginKey = 'is_logged_in';
-  static const String _userKey = 'username';
-  static const String _emailKey = 'email';
-  static const String _roleKey = 'role';
-
   static const String baseUrl =
       'http://172.16.150.140:8000/api';
 
+  static const String loginKey =
+      'is_logged_in';
+
+  static const String userKey =
+      'username';
+
+  static const String emailKey =
+      'email';
+
+  static const String roleKey =
+      'role';
+
+  static const String tokenKey =
+      'token';
+
   Future<bool> login(
-    String username,
+    String email,
     String password,
   ) async {
     try {
-      final response = await http
-          .post(
-            Uri.parse('$baseUrl/login'),
-            headers: {
-              'Accept': 'application/json',
-            },
-            body: {
-              'email': username.trim(),
-              'password': password.trim(),
-            },
-          )
-          .timeout(
-            const Duration(seconds: 10),
-          );
+      final response = await http.post(
+        Uri.parse('$baseUrl/login'),
+        headers: {
+          'Accept': 'application/json',
+        },
+        body: {
+          'email': email.trim(),
+          'password': password.trim(),
+        },
+      );
 
-      print(response.statusCode);
-      print(response.body);
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-
-        final prefs =
-            await SharedPreferences
-                .getInstance();
-
-        await prefs.setBool(
-          _loginKey,
-          true,
-        );
-
-        await prefs.setString(
-          _userKey,
-          data['name'] ?? '',
-        );
-
-        await prefs.setString(
-          _emailKey,
-          data['email'] ?? '',
-        );
-
-        await prefs.setString(
-          _roleKey,
-          data['role'] ?? '',
-        );
-
-        return true;
+      if (response.statusCode != 200) {
+        return false;
       }
 
-      return false;
-    } catch (e) {
-      print(e);
+      final data =
+          jsonDecode(response.body);
+
+      final prefs =
+          await SharedPreferences
+              .getInstance();
+
+      await prefs.setBool(
+        loginKey,
+        true,
+      );
+
+      await prefs.setString(
+        userKey,
+        data['name'] ?? '',
+      );
+
+      await prefs.setString(
+        emailKey,
+        data['email'] ?? '',
+      );
+
+      await prefs.setString(
+        roleKey,
+        data['role'] ?? '',
+      );
+
+      await prefs.setString(
+        tokenKey,
+        data['token'] ?? '',
+      );
+
+      return true;
+    } catch (_) {
       return false;
     }
   }
@@ -85,7 +93,8 @@ class AuthService {
             .getInstance();
 
     return prefs.getBool(
-            _loginKey) ??
+          loginKey,
+        ) ??
         false;
   }
 
@@ -95,7 +104,8 @@ class AuthService {
             .getInstance();
 
     return prefs.getString(
-            _userKey) ??
+          userKey,
+        ) ??
         '';
   }
 
@@ -105,7 +115,8 @@ class AuthService {
             .getInstance();
 
     return prefs.getString(
-            _emailKey) ??
+          emailKey,
+        ) ??
         '';
   }
 
@@ -115,7 +126,19 @@ class AuthService {
             .getInstance();
 
     return prefs.getString(
-            _roleKey) ??
+          roleKey,
+        ) ??
+        '';
+  }
+
+  Future<String> getToken() async {
+    final prefs =
+        await SharedPreferences
+            .getInstance();
+
+    return prefs.getString(
+          tokenKey,
+        ) ??
         '';
   }
 }
