@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import '../../services/api_service.dart';
 
 class MeterFormPage extends StatefulWidget {
   final String title;
 
   const MeterFormPage({
+    Key? key,
     required this.title,
-  });
+  }) : super(key: key);
 
   @override
   State<MeterFormPage> createState() =>
@@ -20,18 +22,77 @@ class _MeterFormPageState
   final remarksController =
       TextEditingController();
 
-  void submit() {
+  bool isLoading = false;
+
+  @override
+  void dispose() {
+    readingController.dispose();
+    remarksController.dispose();
+    super.dispose();
+  }
+
+  Future<void> submit() async {
     final reading =
         readingController.text.trim();
 
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
-      SnackBar(
-        content: Text(
-          '${widget.title} submitted: $reading kW',
+    final remarks =
+        remarksController.text.trim();
+
+    if (reading.isEmpty) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Enter reading',
+          ),
         ),
-      ),
-    );
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      await ApiService.storeReading(
+        module: 'electric',
+        sourceName: widget.title,
+        reading: reading,
+        remarks: remarks,
+      );
+
+      if (!mounted) return;
+
+      readingController.clear();
+      remarksController.clear();
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Submitted successfully',
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Submit failed',
+          ),
+        ),
+      );
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -81,7 +142,6 @@ class _MeterFormPageState
         ),
         centerTitle: true,
       ),
-
       body: ListView(
         padding:
             const EdgeInsets.all(18),
@@ -125,16 +185,19 @@ class _MeterFormPageState
             child: Center(
               child: SizedBox(
                 height: 46,
-                child: ElevatedButton.icon(
+                child:
+                    ElevatedButton.icon(
                   onPressed: () {},
                   icon: const Icon(
                     Icons.camera_alt,
-                    color: Colors.white,
+                    color:
+                        Colors.white,
                   ),
                   label: const Text(
                     'Upload Photo',
                     style: TextStyle(
-                      color: Colors.white,
+                      color:
+                          Colors.white,
                       fontWeight:
                           FontWeight.bold,
                     ),
@@ -185,7 +248,10 @@ class _MeterFormPageState
             height: 56,
             child:
                 ElevatedButton(
-              onPressed: submit,
+              onPressed:
+                  isLoading
+                      ? null
+                      : submit,
               style:
                   ElevatedButton.styleFrom(
                 backgroundColor:
@@ -199,17 +265,22 @@ class _MeterFormPageState
                 ),
               ),
               child:
-                  const Text(
-                'Submit',
-                style:
-                    TextStyle(
-                  color:
-                      Colors.white,
-                  fontSize: 18,
-                  fontWeight:
-                      FontWeight.bold,
-                ),
-              ),
+                  isLoading
+                      ? const CircularProgressIndicator(
+                        color:
+                            Colors.white,
+                      )
+                      : const Text(
+                        'Submit',
+                        style:
+                            TextStyle(
+                          color:
+                              Colors.white,
+                          fontSize: 18,
+                          fontWeight:
+                              FontWeight.bold,
+                        ),
+                      ),
             ),
           ),
         ],

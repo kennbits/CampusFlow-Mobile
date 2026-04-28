@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/api_service.dart';
 
 class HazardWastePage extends StatefulWidget {
   const HazardWastePage({super.key});
@@ -27,18 +28,58 @@ class _HazardWastePageState
     );
   }
 
-  void _submit() {
-    final waste =
-        _wasteController.text.trim();
+  bool isLoading = false;
 
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
-      SnackBar(
-        content: Text(
-          'Hazard Waste submitted: $waste kg',
+  Future<void> _submit() async {
+    final waste = _wasteController.text.trim();
+    final remarks = _remarksController.text.trim();
+
+    if (waste.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Enter weight'),
         ),
-      ),
-    );
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      await ApiService.storeReading(
+        module: 'waste',
+        sourceName: 'Hazard Waste',
+        reading: waste,
+        remarks: remarks,
+      );
+
+      if (!mounted) return;
+
+      _wasteController.clear();
+      _remarksController.clear();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Submitted successfully'),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Submit failed'),
+        ),
+      );
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override

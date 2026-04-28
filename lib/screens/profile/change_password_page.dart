@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/api_service.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -20,6 +21,10 @@ class _ChangePasswordPageState
       TextEditingController();
 
   bool loading = false;
+
+  bool show1 = false;
+  bool show2 = false;
+  bool show3 = false;
 
   Future<void> savePassword() async {
     final current =
@@ -47,19 +52,33 @@ class _ChangePasswordPageState
       loading = true;
     });
 
-    await Future.delayed(
-      const Duration(seconds: 1),
-    );
+    try {
+      final result =
+          await ApiService.changePassword(
+        currentPassword: current,
+        newPassword: newPass,
+        confirmPassword: confirm,
+      );
 
-    setState(() {
-      loading = false;
-    });
+      if (!mounted) return;
 
-    showMsg('Password updated');
+      showMsg(
+        result['message'] ??
+            'Password updated',
+      );
 
-    if (!mounted) return;
+      Navigator.pop(context);
+    } catch (e) {
+      if (!mounted) return;
 
-    Navigator.pop(context);
+      showMsg('Failed to update');
+    } finally {
+      if (!mounted) return;
+
+      setState(() {
+        loading = false;
+      });
+    }
   }
 
   void showMsg(String msg) {
@@ -69,69 +88,161 @@ class _ChangePasswordPageState
     );
   }
 
+  InputDecoration fieldStyle(
+    String label,
+    bool visible,
+    VoidCallback toggle,
+  ) {
+    return InputDecoration(
+      labelText: label,
+      border: OutlineInputBorder(
+        borderRadius:
+            BorderRadius.circular(14),
+      ),
+      suffixIcon: IconButton(
+        onPressed: toggle,
+        icon: Icon(
+          visible
+              ? Icons.visibility
+              : Icons.visibility_off,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final dark =
+        Theme.of(context).brightness ==
+            Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title:
             const Text('Change Password'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding:
             const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            TextField(
-              controller:
-                  _currentController,
-              obscureText: true,
-              decoration:
-                  const InputDecoration(
-                labelText:
-                    'Current Password',
-              ),
+        child: Container(
+          padding:
+              const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: dark
+                ? Colors.grey.shade900
+                : Colors.white,
+            borderRadius:
+                BorderRadius.circular(
+              18,
             ),
-            const SizedBox(height: 16),
-
-            TextField(
-              controller: _newController,
-              obscureText: true,
-              decoration:
-                  const InputDecoration(
-                labelText:
-                    'New Password',
+            boxShadow: const [
+              BoxShadow(
+                blurRadius: 8,
+                color: Colors.black12,
               ),
-            ),
-            const SizedBox(height: 16),
-
-            TextField(
-              controller:
-                  _confirmController,
-              obscureText: true,
-              decoration:
-                  const InputDecoration(
-                labelText:
-                    'Confirm Password',
+            ],
+          ),
+          child: Column(
+            children: [
+              const Icon(
+                Icons.lock_reset,
+                size: 55,
               ),
-            ),
-
-            const SizedBox(height: 30),
-
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: loading
-                    ? null
-                    : savePassword,
-                child: loading
-                    ? const CircularProgressIndicator()
-                    : const Text(
-                        'Save',
+              const SizedBox(
+                height: 20,
+              ),
+              TextField(
+                controller:
+                    _currentController,
+                obscureText: !show1,
+                decoration:
+                    fieldStyle(
+                  'Current Password',
+                  show1,
+                  () {
+                    setState(() {
+                      show1 = !show1;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              TextField(
+                controller:
+                    _newController,
+                obscureText: !show2,
+                decoration:
+                    fieldStyle(
+                  'New Password',
+                  show2,
+                  () {
+                    setState(() {
+                      show2 = !show2;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              TextField(
+                controller:
+                    _confirmController,
+                obscureText: !show3,
+                decoration:
+                    fieldStyle(
+                  'Confirm Password',
+                  show3,
+                  () {
+                    setState(() {
+                      show3 = !show3;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 28,
+              ),
+              SizedBox(
+                width:
+                    double.infinity,
+                height: 52,
+                child:
+                    ElevatedButton(
+                  onPressed:
+                      loading
+                          ? null
+                          : savePassword,
+                  style:
+                      ElevatedButton
+                          .styleFrom(
+                    shape:
+                        RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(
+                        14,
                       ),
+                    ),
+                  ),
+                  child: loading
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child:
+                              CircularProgressIndicator(
+                            strokeWidth:
+                                2,
+                          ),
+                        )
+                      : const Text(
+                          'Update Password',
+                        ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

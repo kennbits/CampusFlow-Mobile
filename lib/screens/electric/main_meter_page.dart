@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/api_service.dart';
 
 class MainMeterPage extends StatefulWidget {
   const MainMeterPage({Key? key}) : super(key: key);
@@ -8,8 +9,13 @@ class MainMeterPage extends StatefulWidget {
 }
 
 class _MainMeterPageState extends State<MainMeterPage> {
-  final TextEditingController _consumptionController = TextEditingController();
-  final TextEditingController _remarksController = TextEditingController();
+  final TextEditingController _consumptionController =
+      TextEditingController();
+
+  final TextEditingController _remarksController =
+      TextEditingController();
+
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -20,35 +26,84 @@ class _MainMeterPageState extends State<MainMeterPage> {
 
   void _pickPhoto() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Pick photo (not implemented)')),
-    );
-  }
-
-  void _submit() {
-    final reading =
-        _consumptionController.text.trim();
-
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
-      SnackBar(
-        content: Text(
-          'Submitted: $reading kW',
-        ),
+      const SnackBar(
+        content: Text('Pick photo (not implemented)'),
       ),
     );
   }
 
+  Future<void> _submit() async {
+    final reading =
+        _consumptionController.text.trim();
+
+    final remarks =
+        _remarksController.text.trim();
+
+    if (reading.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Enter reading'),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      await ApiService.storeReading(
+        module: 'electric',
+        sourceName: 'Main Meter',
+        reading: reading,
+        remarks: remarks,
+      );
+
+      if (!mounted) return;
+
+      _consumptionController.clear();
+      _remarksController.clear();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Submitted successfully'),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Submit failed'),
+        ),
+      );
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final bgColor =
+        Theme.of(context)
+            .scaffoldBackgroundColor;
+
     return Scaffold(
-      backgroundColor:
-          Theme.of(context)
-              .scaffoldBackgroundColor,
+      backgroundColor: bgColor,
       appBar: AppBar(
+        backgroundColor: bgColor,
+        elevation: 0,
         leading: Padding(
-          padding: const EdgeInsets.all(8),
+          padding:
+              const EdgeInsets.all(8),
           child: Container(
-            decoration: const BoxDecoration(
+            decoration:
+                const BoxDecoration(
               shape: BoxShape.circle,
               color: Color(0xFFE63946),
             ),
@@ -71,17 +126,14 @@ class _MainMeterPageState extends State<MainMeterPage> {
           ),
         ),
         centerTitle: true,
-        backgroundColor:
-            Theme.of(context)
-                .scaffoldBackgroundColor,
-        elevation: 0,
       ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(18),
+          padding:
+              const EdgeInsets.all(18),
           children: [
             _SectionCard(
-              title: 'Consumption',
+              title: 'Reading',
               child: Row(
                 children: [
                   Expanded(
@@ -89,8 +141,7 @@ class _MainMeterPageState extends State<MainMeterPage> {
                       controller:
                           _consumptionController,
                       keyboardType:
-                          const TextInputType
-                              .numberWithOptions(
+                          const TextInputType.numberWithOptions(
                         decimal: true,
                       ),
                       decoration:
@@ -134,8 +185,7 @@ class _MainMeterPageState extends State<MainMeterPage> {
                       ),
                     ),
                     style:
-                        ElevatedButton
-                            .styleFrom(
+                        ElevatedButton.styleFrom(
                       backgroundColor:
                           Colors.redAccent,
                     ),
@@ -171,8 +221,12 @@ class _MainMeterPageState extends State<MainMeterPage> {
 
             SizedBox(
               height: 56,
-              child: ElevatedButton(
-                onPressed: _submit,
+              child:
+                  ElevatedButton(
+                onPressed:
+                    isLoading
+                        ? null
+                        : _submit,
                 style:
                     ElevatedButton.styleFrom(
                   backgroundColor:
@@ -185,15 +239,22 @@ class _MainMeterPageState extends State<MainMeterPage> {
                             18),
                   ),
                 ),
-                child: const Text(
-                  'Submit',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight:
-                        FontWeight.bold,
-                  ),
-                ),
+                child:
+                    isLoading
+                        ? const CircularProgressIndicator(
+                          color:
+                              Colors.white,
+                        )
+                        : const Text(
+                          'Submit',
+                          style: TextStyle(
+                            color:
+                                Colors.white,
+                            fontSize: 18,
+                            fontWeight:
+                                FontWeight.bold,
+                          ),
+                        ),
               ),
             ),
           ],

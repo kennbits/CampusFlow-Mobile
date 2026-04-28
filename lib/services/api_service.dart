@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'auth_service.dart';
 
 class ApiService {
   // localhost for same PC testing
@@ -77,5 +78,36 @@ class ApiService {
     }
 
     throw Exception('Failed');
+  }
+
+  static Future<dynamic> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    final token =
+        await AuthService().getToken();
+
+    final response = await http.put(
+      Uri.parse(
+        '$baseUrl/change-password',
+      ),
+      headers: {
+        'Accept':
+            'application/json',
+        'Authorization':
+            'Bearer $token',
+      },
+      body: {
+        'current_password':
+            currentPassword,
+        'new_password':
+            newPassword,
+        'confirm_password':
+            confirmPassword,
+      },
+    );
+
+    return jsonDecode(response.body);
   }
 }
