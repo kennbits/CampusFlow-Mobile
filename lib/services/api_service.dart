@@ -2,9 +2,37 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'auth_service.dart';
 
+import '../models/resource_meter.dart';
+
 class ApiService {
   // localhost for same PC testing
   static const String baseUrl = 'http://172.16.150.140:8000/api';
+
+  // resource meters
+  static Future<List<ResourceMeter>>
+  getResourceMeters(String type) async {
+
+    final response = await http.get(
+      Uri.parse(
+        '$baseUrl/resource-meters?type=$type',
+      ),
+      headers: {
+        'Accept': 'application/json',
+      },
+    );
+
+    if (response.statusCode != 200) {
+      return [];
+    }
+
+    final data = jsonDecode(response.body);
+
+    return List<ResourceMeter>.from(
+      data.map(
+        (x) => ResourceMeter.fromJson(x),
+      ),
+    );
+  }
 
   // status
   static Future<dynamic> getStatus() async {
@@ -54,30 +82,34 @@ class ApiService {
 
   // store reading
   static Future<dynamic> storeReading({
-    required String module,
-    required String sourceName,
+    required int meterId,
     required String reading,
-    required String remarks,
   }) async {
+
+    final token =
+        await AuthService().getToken();
+
     final response = await http.post(
       Uri.parse('$baseUrl/readings'),
       headers: {
         'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
       },
       body: {
-        'module': module,
-        'source_name': sourceName,
+        'resource_meter_id': meterId.toString(),
         'reading': reading,
-        'remarks': remarks,
       },
     );
+
+    print(response.statusCode);
+    print(response.body);
 
     if (response.statusCode == 200 ||
         response.statusCode == 201) {
       return jsonDecode(response.body);
     }
 
-    throw Exception('Failed');
+    throw Exception(response.body);
   }
 
   static Future<dynamic> changePassword({

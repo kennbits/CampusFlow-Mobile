@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
+
 import '../../services/api_service.dart';
 
-class RecyclablesPage extends StatefulWidget {
-  const RecyclablesPage({super.key});
+class WasteFormPage
+    extends StatefulWidget {
+
+  final int meterId;
+  final String title;
+
+  const WasteFormPage({
+    super.key,
+    required this.meterId,
+    required this.title,
+  });
 
   @override
-  State<RecyclablesPage> createState() =>
-      _RecyclablesPageState();
+  State<WasteFormPage>
+      createState() =>
+          _WasteFormPageState();
 }
 
-class _RecyclablesPageState
-    extends State<RecyclablesPage> {
+class _WasteFormPageState
+    extends State<WasteFormPage> {
+
   final _wasteController =
       TextEditingController();
 
@@ -21,12 +33,15 @@ class _RecyclablesPageState
 
   @override
   void dispose() {
+
     _wasteController.dispose();
     _remarksController.dispose();
+
     super.dispose();
   }
 
   void _pickPhoto() {
+
     ScaffoldMessenger.of(context)
         .showSnackBar(
       const SnackBar(
@@ -38,13 +53,12 @@ class _RecyclablesPageState
   }
 
   Future<void> _submit() async {
+
     final waste =
         _wasteController.text.trim();
 
-    final remarks =
-        _remarksController.text.trim();
-
     if (waste.isEmpty) {
+
       ScaffoldMessenger.of(context)
           .showSnackBar(
         const SnackBar(
@@ -52,6 +66,7 @@ class _RecyclablesPageState
               Text('Enter weight'),
         ),
       );
+
       return;
     }
 
@@ -60,11 +75,12 @@ class _RecyclablesPageState
     });
 
     try {
+
       await ApiService.storeReading(
-        module: 'waste',
-        sourceName: 'Recyclables',
+        meterId:
+            widget.meterId,
+
         reading: waste,
-        remarks: remarks,
       );
 
       if (!mounted) return;
@@ -80,7 +96,9 @@ class _RecyclablesPageState
           ),
         ),
       );
+
     } catch (e) {
+
       if (!mounted) return;
 
       ScaffoldMessenger.of(context)
@@ -101,6 +119,7 @@ class _RecyclablesPageState
 
   @override
   Widget build(BuildContext context) {
+
     final isDark =
         Theme.of(context).brightness ==
             Brightness.dark;
@@ -111,8 +130,10 @@ class _RecyclablesPageState
           gradient: LinearGradient(
             begin:
                 Alignment.topCenter,
-            end: Alignment
-                .bottomCenter,
+
+            end:
+                Alignment.bottomCenter,
+
             colors: isDark
                 ? const [
                     Color(0xFF111111),
@@ -124,55 +145,62 @@ class _RecyclablesPageState
                   ],
           ),
         ),
+
         child: SafeArea(
           child: Column(
             children: [
+
               Padding(
                 padding:
                     const EdgeInsets.all(
                         18),
+
                 child: Row(
                   children: [
+
                     InkWell(
                       borderRadius:
-                          BorderRadius
-                              .circular(
-                                  50),
+                          BorderRadius.circular(
+                              50),
+
                       onTap: () =>
                           Navigator.pop(
                               context),
+
                       child: Container(
                         width: 48,
                         height: 48,
+
                         decoration:
                             const BoxDecoration(
                           color: Color(
                             0xFFED1B2F,
                           ),
-                          shape: BoxShape
-                              .circle,
+
+                          shape:
+                              BoxShape.circle,
                         ),
+
                         child:
                             const Icon(
-                          Icons
-                              .arrow_back,
-                          color: Colors
-                              .white,
+                          Icons.arrow_back,
+                          color:
+                              Colors.white,
                         ),
                       ),
                     ),
 
-                    const Expanded(
+                    Expanded(
                       child: Center(
                         child: Text(
-                          'RECYCLABLES',
+                          widget.title
+                              .toUpperCase(),
+
                           style:
-                              TextStyle(
-                            fontSize:
-                                26,
+                              const TextStyle(
+                            fontSize: 26,
                             fontWeight:
-                                FontWeight
-                                    .w700,
+                                FontWeight.w700,
                             color: Color(
                               0xFFED1B2F,
                             ),
@@ -192,24 +220,30 @@ class _RecyclablesPageState
               Expanded(
                 child: ListView(
                   padding:
-                      const EdgeInsets
-                          .all(20),
+                      const EdgeInsets.all(
+                          20),
+
                   children: [
+
                     _SectionCard(
                       title:
                           'Waste Generated',
+
                       child: Row(
                         children: [
+
                           Expanded(
                             child:
                                 TextField(
                               controller:
                                   _wasteController,
+
                               keyboardType:
                                   const TextInputType.numberWithOptions(
                                 decimal:
                                     true,
                               ),
+
                               decoration:
                                   const InputDecoration(
                                 hintText:
@@ -217,11 +251,13 @@ class _RecyclablesPageState
                               ),
                             ),
                           ),
+
                           const SizedBox(
-                              width:
-                                  10),
+                              width: 10),
+
                           const Text(
                             'kg',
+
                             style:
                                 TextStyle(
                               fontWeight:
@@ -236,40 +272,45 @@ class _RecyclablesPageState
                         height: 16),
 
                     _SectionCard(
-                      title:
-                          'Photo',
+                      title: 'Photo',
+
                       child: SizedBox(
-                        width: double
-                            .infinity,
+                        width:
+                            double.infinity,
                         height: 52,
+
                         child:
                             ElevatedButton.icon(
                           onPressed:
                               _pickPhoto,
+
                           icon:
                               const Icon(
-                            Icons
-                                .camera_alt,
-                            color: Colors
-                                .white,
+                            Icons.camera_alt,
+                            color:
+                                Colors.white,
                           ),
+
                           label:
                               const Text(
                             'Upload Photo',
+
                             style:
                                 TextStyle(
-                              color: Colors
-                                  .white,
+                              color:
+                                  Colors.white,
                               fontWeight:
                                   FontWeight.w700,
                             ),
                           ),
+
                           style:
                               ElevatedButton.styleFrom(
                             backgroundColor:
                                 const Color(
                               0xFFED1B2F,
                             ),
+
                             shape:
                                 RoundedRectangleBorder(
                               borderRadius:
@@ -287,12 +328,15 @@ class _RecyclablesPageState
                     _SectionCard(
                       title:
                           'Remarks',
+
                       child:
                           TextField(
                         controller:
                             _remarksController,
+
                         minLines: 5,
                         maxLines: 7,
+
                         decoration:
                             const InputDecoration(
                           hintText:
@@ -306,20 +350,23 @@ class _RecyclablesPageState
 
                     SizedBox(
                       height: 58,
+
                       child:
                           ElevatedButton(
                         onPressed:
                             isLoading
                                 ? null
                                 : _submit,
+
                         style:
                             ElevatedButton.styleFrom(
                           backgroundColor:
                               const Color(
                             0xFFED1B2F,
                           ),
-                          elevation:
-                              8,
+
+                          elevation: 8,
+
                           shape:
                               RoundedRectangleBorder(
                             borderRadius:
@@ -327,12 +374,15 @@ class _RecyclablesPageState
                                     18),
                           ),
                         ),
+
                         child: isLoading
                             ? const CircularProgressIndicator(
-                                color: Colors.white,
+                                color:
+                                    Colors.white,
                               )
                             : const Text(
                                 'Submit',
+
                                 style:
                                     TextStyle(
                                   fontSize:
@@ -361,6 +411,7 @@ class _RecyclablesPageState
 
 class _SectionCard
     extends StatelessWidget {
+
   final String title;
   final Widget child;
 
@@ -372,16 +423,20 @@ class _SectionCard
   @override
   Widget build(
       BuildContext context) {
+
     return Container(
       padding:
           const EdgeInsets.all(
               18),
+
       decoration:
           BoxDecoration(
         color: Colors.white,
+
         borderRadius:
             BorderRadius.circular(
                 24),
+
         boxShadow: const [
           BoxShadow(
             color:
@@ -392,26 +447,30 @@ class _SectionCard
           ),
         ],
       ),
+
       child: Column(
         crossAxisAlignment:
-            CrossAxisAlignment
-                .start,
+            CrossAxisAlignment.start,
+
         children: [
+
           Text(
             title,
+
             style:
                 const TextStyle(
               fontSize: 18,
               fontWeight:
-                  FontWeight
-                      .w700,
+                  FontWeight.w700,
               color: Color(
                 0xFFED1B2F,
               ),
             ),
           ),
+
           const SizedBox(
               height: 14),
+
           child,
         ],
       ),

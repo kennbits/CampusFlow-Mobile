@@ -1,12 +1,31 @@
 import 'package:flutter/material.dart';
-import 'prime_water.dart';
-import 'deep_well_1.dart';
-import 'deep_well_2.dart';
-import 'deep_well_3.dart';
-import 'deep_well_4.dart';
 
-class WaterReadingPage extends StatelessWidget {
+import '../../models/resource_meter.dart';
+import '../../services/api_service.dart';
+import 'prime_water.dart';
+
+class WaterReadingPage extends StatefulWidget {
   const WaterReadingPage({super.key});
+
+  @override
+  State<WaterReadingPage> createState() =>
+      _WaterReadingPageState();
+}
+
+class _WaterReadingPageState
+    extends State<WaterReadingPage> {
+  late Future<List<ResourceMeter>>
+      metersFuture;
+
+  @override
+  void initState() {
+    super.initState();
+
+    metersFuture =
+        ApiService.getResourceMeters(
+      'water',
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +53,6 @@ class WaterReadingPage extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              // Header
               Padding(
                 padding:
                     const EdgeInsets.all(
@@ -114,98 +132,93 @@ class WaterReadingPage extends StatelessWidget {
                   height: 22),
 
               Expanded(
-                child: ListView(
-                  padding:
-                      const EdgeInsets
-                          .symmetric(
-                    horizontal: 20,
-                  ),
-                  children: [
-                    _WaterCard(
-                      title:
-                          'Prime Water',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                const PrimeWaterPage(),
-                          ),
-                        );
-                      },
-                    ),
+                child: FutureBuilder<
+                    List<ResourceMeter>>(
+                  future: metersFuture,
+                  builder: (
+                    context,
+                    snapshot,
+                  ) {
+                    if (snapshot
+                            .connectionState ==
+                        ConnectionState
+                            .waiting) {
+                      return const Center(
+                        child:
+                            CircularProgressIndicator(),
+                      );
+                    }
 
-                    const SizedBox(
-                        height: 16),
+                    if (snapshot
+                            .hasError ||
+                        !snapshot
+                            .hasData) {
+                      return const Center(
+                        child: Text(
+                          'Failed to load water sources',
+                        ),
+                      );
+                    }
 
-                    _WaterCard(
-                      title:
-                          'Deep Well 1',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                const DeepWell1Page(),
-                          ),
-                        );
-                      },
-                    ),
+                    final meters =
+                        snapshot.data!;
 
-                    const SizedBox(
-                        height: 16),
+                    if (meters
+                        .isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'No water sources found',
+                        ),
+                      );
+                    }
 
-                    _WaterCard(
-                      title:
-                          'Deep Well 2',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                const DeepWell2Page(),
-                          ),
-                        );
-                      },
-                    ),
+                    return ListView
+                        .builder(
+                      padding:
+                          const EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
+                      itemCount:
+                          meters.length,
+                      itemBuilder:
+                          (
+                            context,
+                            index,
+                          ) {
+                            final meter =
+                                meters[index];
 
-                    const SizedBox(
-                        height: 16),
-
-                    _WaterCard(
-                      title:
-                          'Deep Well 3',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                const DeepWell3Page(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(
-                        height: 16),
-
-                    _WaterCard(
-                      title:
-                          'Deep Well 4',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                const DeepWell4Page(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(
-                        height: 24),
-                  ],
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.only(
+                                bottom:
+                                    16,
+                              ),
+                              child:
+                                  _WaterCard(
+                                title:
+                                    meter.location,
+                                onTap:
+                                    () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (_) =>
+                                              PrimeWaterPage(
+                                        meterId:
+                                            meter.id,
+                                        title:
+                                            meter.location,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                    );
+                  },
                 ),
               ),
             ],

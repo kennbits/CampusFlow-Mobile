@@ -1,13 +1,36 @@
 import 'package:flutter/material.dart';
-import 'residuals.dart';
-import 'recyclables.dart';
-import 'hazard_waste.dart';
 
-class WastePage extends StatelessWidget {
+import '../../models/resource_meter.dart';
+import '../../services/api_service.dart';
+import 'waste_form_page.dart';
+
+class WastePage extends StatefulWidget {
   const WastePage({super.key});
 
   @override
+  State<WastePage> createState() =>
+      _WastePageState();
+}
+
+class _WastePageState
+    extends State<WastePage> {
+
+  late Future<List<ResourceMeter>>
+      metersFuture;
+
+  @override
+  void initState() {
+    super.initState();
+
+    metersFuture =
+        ApiService.getResourceMeters(
+      'waste',
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     final isDark =
         Theme.of(context).brightness ==
             Brightness.dark;
@@ -16,8 +39,10 @@ class WastePage extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            begin:
+                Alignment.topCenter,
+            end:
+                Alignment.bottomCenter,
             colors: isDark
                 ? const [
                     Color(0xFF111111),
@@ -29,40 +54,46 @@ class WastePage extends StatelessWidget {
                   ],
           ),
         ),
+
         child: SafeArea(
           child: Column(
             children: [
+
               Padding(
                 padding:
                     const EdgeInsets.all(
                         18),
+
                 child: Row(
                   children: [
+
                     InkWell(
                       borderRadius:
-                          BorderRadius
-                              .circular(
-                                  50),
+                          BorderRadius.circular(
+                              50),
+
                       onTap: () =>
                           Navigator.pop(
                               context),
+
                       child: Container(
                         width: 48,
                         height: 48,
+
                         decoration:
                             const BoxDecoration(
                           color: Color(
                             0xFFED1B2F,
                           ),
-                          shape: BoxShape
-                              .circle,
+                          shape:
+                              BoxShape.circle,
                         ),
+
                         child:
                             const Icon(
-                          Icons
-                              .arrow_back,
-                          color: Colors
-                              .white,
+                          Icons.arrow_back,
+                          color:
+                              Colors.white,
                         ),
                       ),
                     ),
@@ -71,13 +102,12 @@ class WastePage extends StatelessWidget {
                       child: Center(
                         child: Text(
                           'WASTE',
+
                           style:
                               TextStyle(
-                            fontSize:
-                                26,
+                            fontSize: 26,
                             fontWeight:
-                                FontWeight
-                                    .w700,
+                                FontWeight.w700,
                             color: Color(
                               0xFFED1B2F,
                             ),
@@ -99,9 +129,11 @@ class WastePage extends StatelessWidget {
 
               const Text(
                 'Choose Waste Type',
+
                 style: TextStyle(
                   fontSize: 15,
-                  color: Colors.black54,
+                  color:
+                      Colors.black54,
                   fontWeight:
                       FontWeight.w500,
                 ),
@@ -111,88 +143,90 @@ class WastePage extends StatelessWidget {
                   height: 22),
 
               Expanded(
-                child: ListView(
-                  padding:
-                      const EdgeInsets
-                          .symmetric(
-                    horizontal: 20,
-                  ),
-                  children: [
-                    _WasteCard(
-                      title:
-                          'Residuals',
-                      icon:
-                          Icons.delete,
-                      iconColor:
-                          Colors.red,
-                      iconBg:
-                          const Color(
-                        0xFFFFEBEE,
+                child: FutureBuilder<
+                    List<ResourceMeter>>(
+                  future: metersFuture,
+
+                  builder: (
+                    context,
+                    snapshot,
+                  ) {
+
+                    if (snapshot
+                            .connectionState ==
+                        ConnectionState
+                            .waiting) {
+
+                      return const Center(
+                        child:
+                            CircularProgressIndicator(),
+                      );
+                    }
+
+                    if (!snapshot.hasData ||
+                        snapshot.data!.isEmpty) {
+
+                      return const Center(
+                        child: Text(
+                          'No waste meters found',
+                        ),
+                      );
+                    }
+
+                    final meters =
+                        snapshot.data!;
+
+                    return ListView.builder(
+                      padding:
+                          const EdgeInsets.symmetric(
+                        horizontal: 20,
                       ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                const ResidualsPage(),
+
+                      itemCount:
+                          meters.length,
+
+                      itemBuilder:
+                          (
+                        context,
+                        index,
+                      ) {
+
+                        final meter =
+                            meters[index];
+
+                        return Padding(
+                          padding:
+                              const EdgeInsets.only(
+                            bottom: 16,
+                          ),
+
+                          child:
+                              _WasteCard(
+                            title:
+                                meter.location,
+
+                            onTap: () {
+
+                              Navigator.push(
+                                context,
+
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      WasteFormPage(
+                                    meterId:
+                                        meter.id,
+
+                                    title:
+                                        meter.location,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         );
                       },
-                    ),
-
-                    const SizedBox(
-                        height: 16),
-
-                    _WasteCard(
-                      title:
-                          'Recyclables',
-                      icon:
-                          Icons.recycling,
-                      iconColor:
-                          Colors.green,
-                      iconBg:
-                          const Color(
-                        0xFFEAF8EC,
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                const RecyclablesPage(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(
-                        height: 16),
-
-                    _WasteCard(
-                      title:
-                          'Hazard Waste',
-                      icon:
-                          Icons.warning_amber,
-                      iconColor:
-                          Colors.orange,
-                      iconBg:
-                          const Color(
-                        0xFFFFF4E5,
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                const HazardWastePage(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(
-                        height: 24),
-                  ],
+                    );
+                  },
                 ),
               ),
             ],
@@ -203,62 +237,71 @@ class WastePage extends StatelessWidget {
   }
 }
 
-class _WasteCard extends StatelessWidget {
+class _WasteCard
+    extends StatelessWidget {
+
   final String title;
-  final IconData icon;
-  final Color iconColor;
-  final Color iconBg;
   final VoidCallback onTap;
 
   const _WasteCard({
     required this.title,
-    required this.icon,
-    required this.iconColor,
-    required this.iconBg,
     required this.onTap,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+      BuildContext context) {
+
     return InkWell(
       borderRadius:
           BorderRadius.circular(
               24),
+
       onTap: onTap,
+
       child: Container(
         padding:
             const EdgeInsets.all(
                 18),
+
         decoration:
             BoxDecoration(
           color: Colors.white,
+
           borderRadius:
-              BorderRadius
-                  .circular(24),
+              BorderRadius.circular(
+                  24),
+
           boxShadow: const [
             BoxShadow(
-              color: Colors.black12,
+              color:
+                  Colors.black12,
               blurRadius: 18,
               offset:
                   Offset(0, 8),
             ),
           ],
         ),
+
         child: Row(
           children: [
+
             Container(
               width: 62,
               height: 62,
+
               decoration:
-                  BoxDecoration(
-                color: iconBg,
+                  const BoxDecoration(
+                color: Color(
+                  0xFFFFEBEE,
+                ),
                 shape:
                     BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                color:
-                    iconColor,
+
+              child: const Icon(
+                Icons.delete,
+                color: Colors.red,
                 size: 30,
               ),
             ),
@@ -269,6 +312,7 @@ class _WasteCard extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
+
                 style:
                     const TextStyle(
                   fontSize: 23,
@@ -279,12 +323,10 @@ class _WasteCard extends StatelessWidget {
             ),
 
             const Icon(
-              Icons
-                  .arrow_forward_ios,
+              Icons.arrow_forward_ios,
               size: 18,
-              color: Color(
-                0xFFED1B2F,
-              ),
+              color:
+                  Color(0xFFED1B2F),
             ),
           ],
         ),

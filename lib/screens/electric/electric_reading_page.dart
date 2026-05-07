@@ -1,9 +1,36 @@
 import 'package:flutter/material.dart';
-import 'main_meter_page.dart';
-import 'submeter_page.dart';
+import '../../models/resource_meter.dart';
+import '../../services/api_service.dart';
+import 'meter_form_page.dart';
 
-class ElectricReadingPage extends StatelessWidget {
-  const ElectricReadingPage({super.key});
+class ElectricReadingPage
+    extends StatefulWidget {
+  const ElectricReadingPage({
+    super.key,
+  });
+
+  @override
+  State<ElectricReadingPage>
+      createState() =>
+          _ElectricReadingPageState();
+}
+
+class _ElectricReadingPageState
+    extends State<
+        ElectricReadingPage> {
+
+  late Future<List<ResourceMeter>>
+      metersFuture;
+
+  @override
+  void initState() {
+    super.initState();
+
+    metersFuture =
+        ApiService.getResourceMeters(
+      'electric',
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +58,6 @@ class ElectricReadingPage extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              // Header
               Padding(
                 padding:
                     const EdgeInsets.all(
@@ -111,47 +137,93 @@ class ElectricReadingPage extends StatelessWidget {
                   height: 22),
 
               Expanded(
-                child: ListView(
-                  padding:
-                      const EdgeInsets
-                          .symmetric(
-                    horizontal: 20,
-                  ),
-                  children: [
-                    _MeterCard(
-                      title:
-                          'Main Meter',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                const MainMeterPage(),
+                child: FutureBuilder<
+                    List<ResourceMeter>>(
+                  future: metersFuture,
+                  builder: (
+                    context,
+                    snapshot,
+                  ) {
+
+                    if (snapshot
+                            .connectionState ==
+                        ConnectionState
+                            .waiting) {
+                      return const Center(
+                        child:
+                            CircularProgressIndicator(),
+                      );
+                    }
+
+                    if (snapshot
+                            .hasError ||
+                        !snapshot
+                            .hasData) {
+                      return const Center(
+                        child: Text(
+                          'Failed to load meters',
+                        ),
+                      );
+                    }
+
+                    final meters =
+                        snapshot.data!;
+
+                    if (meters
+                        .isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'No electric meters found',
+                        ),
+                      );
+                    }
+
+                    return ListView
+                        .builder(
+                      padding:
+                          const EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
+                      itemCount:
+                          meters.length,
+                      itemBuilder:
+                          (
+                        context,
+                        index,
+                      ) {
+
+                        final meter =
+                            meters[index];
+
+                        return Padding(
+                          padding:
+                              const EdgeInsets.only(
+                            bottom: 16,
+                          ),
+                          child:
+                              _MeterCard(
+                            title:
+                                meter.location,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (_) =>
+                                          MeterFormPage(
+                                    meterId:
+                                        meter.id,
+                                    title:
+                                        meter.location,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         );
                       },
-                    ),
-
-                    const SizedBox(
-                        height: 16),
-
-                    _MeterCard(
-                      title:
-                          'Submeter',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                const SubmeterPage(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(
-                        height: 24),
-                  ],
+                    );
+                  },
                 ),
               ),
             ],
@@ -162,7 +234,9 @@ class ElectricReadingPage extends StatelessWidget {
   }
 }
 
-class _MeterCard extends StatelessWidget {
+class _MeterCard
+    extends StatelessWidget {
+
   final String title;
   final VoidCallback onTap;
 
@@ -172,7 +246,9 @@ class _MeterCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+      BuildContext context) {
+
     return InkWell(
       borderRadius:
           BorderRadius.circular(

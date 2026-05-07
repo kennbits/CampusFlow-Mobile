@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
 
 class MeterFormPage extends StatefulWidget {
-  final String title;
 
-  const MeterFormPage({
-    super.key,
-    required this.title,
-  });
+    final int meterId;
+    final String title;
+
+    const MeterFormPage({
+      super.key,
+      required this.meterId,
+      required this.title,
+    });
 
   @override
   State<MeterFormPage> createState() =>
@@ -55,10 +58,8 @@ class _MeterFormPageState
 
     try {
       await ApiService.storeReading(
-        module: 'electric',
-        sourceName: widget.title,
+        meterId: widget.meterId,
         reading: reading,
-        remarks: remarks,
       );
 
       if (!mounted) return;
@@ -157,7 +158,7 @@ class _MeterFormPageState
                     Expanded(
                       child: Center(
                         child: Text(
-                          widget.title,
+                          widget.title.toUpperCase(),
                           style:
                               const TextStyle(
                             fontSize:
