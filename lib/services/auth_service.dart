@@ -37,6 +37,9 @@ class AuthService {
         },
       );
 
+      print(response.statusCode);
+      print(response.body);
+
       if (response.statusCode != 200) {
         return false;
       }
@@ -65,7 +68,7 @@ class AuthService {
 
       await prefs.setString(
         roleKey,
-        data['role'] ?? '',
+        data['role']['name'] ?? '',
       );
 
       await prefs.setString(
@@ -74,7 +77,8 @@ class AuthService {
       );
 
       return true;
-    } catch (_) {
+    } catch (e) {
+      print(e);
       return false;
     }
   }
