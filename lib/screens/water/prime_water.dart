@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
+import '../../models/resource_meter.dart';
 
 class PrimeWaterPage extends StatelessWidget {
-  const PrimeWaterPage({super.key});
+  final int meterId;
+  final String title;
+
+  const PrimeWaterPage({
+    super.key,
+    required this.meterId,
+    required this.title,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +73,10 @@ class PrimeWaterPage extends StatelessWidget {
                       ),
                     ),
 
-                    const Expanded(
+                    Expanded(
                       child: Center(
                         child: Text(
-                          'PRIME WATER',
+                          title.toUpperCase(),
                           style:
                               TextStyle(
                             fontSize:
@@ -92,11 +100,10 @@ class PrimeWaterPage extends StatelessWidget {
                 ),
               ),
 
-              const Expanded(
-                child:
-                    WaterSourceBody(
-                  sourceName:
-                      'Prime Water',
+              Expanded(
+                child: WaterSourceBody(
+                  meterId: meterId,
+                  sourceName: title,
                 ),
               ),
             ],
@@ -109,10 +116,12 @@ class PrimeWaterPage extends StatelessWidget {
 
 class WaterSourceBody extends StatefulWidget {
   final String sourceName;
+  final int meterId;
 
   const WaterSourceBody({
     super.key,
     required this.sourceName,
+    required this.meterId,
   });
 
   @override
@@ -153,14 +162,9 @@ class _WaterSourceBodyState
 
     try {
       await ApiService.storeReading(
-        module: 'water',
-        sourceName:
-            widget.sourceName,
+        meterId: widget.meterId,
         reading:
             readingController.text
-                .trim(),
-        remarks:
-            remarksController.text
                 .trim(),
       );
 
