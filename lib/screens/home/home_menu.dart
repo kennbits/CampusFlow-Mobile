@@ -9,6 +9,7 @@ import '../history/history_page.dart';
 import '../alerts/alerts_page.dart';
 import '../profile/profile_page.dart';
 import '../../services/api_service.dart';
+import '../../services/offline_queue_service.dart';
 
 class HomeMenu extends StatefulWidget {
   const HomeMenu({super.key});
@@ -91,9 +92,14 @@ class _HomeContentState
 
   @override
   void initState() {
+
     super.initState();
+
     loadUser();
+
     loadData();
+
+    syncOfflineReadings();
   }
 
   Future<void> loadUser() async {
@@ -124,6 +130,13 @@ class _HomeContentState
         alertCount = alerts.length;
       });
     } catch (_) {}
+  }
+
+  Future<void> syncOfflineReadings()
+  async {
+
+    await OfflineQueueService()
+        .syncPendingReadings();
   }
 
   @override

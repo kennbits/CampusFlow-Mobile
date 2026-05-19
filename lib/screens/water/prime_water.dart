@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
-import '../../models/resource_meter.dart';
 
 class PrimeWaterPage extends StatelessWidget {
   final int meterId;
@@ -161,8 +160,12 @@ class _WaterSourceBodyState
     });
 
     try {
-      await ApiService.storeReading(
+
+      final result =
+          await ApiService.storeReading(
+
         meterId: widget.meterId,
+
         reading:
             readingController.text
                 .trim(),
@@ -170,18 +173,45 @@ class _WaterSourceBodyState
 
       if (!mounted) return;
 
+      // Offline mode
+      if (result['offline'] == true) {
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(
+
+          const SnackBar(
+
+            content: Text(
+
+              'No internet. '
+              'Saved locally and '
+              'will sync automatically.',
+            ),
+          ),
+        );
+
+        return;
+      }
+
+      // Success
       readingController.clear();
+
       remarksController.clear();
 
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(
+
         const SnackBar(
+
           content: Text(
+
             'Submitted successfully',
           ),
         ),
       );
+
     } catch (e) {
       if (!mounted) return;
 

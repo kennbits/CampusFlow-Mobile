@@ -57,24 +57,54 @@ class _MeterFormPageState
     });
 
     try {
-      await ApiService.storeReading(
+
+      final result =
+          await ApiService.storeReading(
+
         meterId: widget.meterId,
+
         reading: reading,
       );
 
       if (!mounted) return;
 
+      // Offline mode
+      if (result['offline'] == true) {
+
+        ScaffoldMessenger.of(context)
+            .showSnackBar(
+
+          const SnackBar(
+
+            content: Text(
+
+              'No internet. '
+              'Saved locally and '
+              'will sync automatically.',
+            ),
+          ),
+        );
+
+        return;
+      }
+
+      // Success
       readingController.clear();
+
       remarksController.clear();
 
       ScaffoldMessenger.of(context)
           .showSnackBar(
+
         const SnackBar(
+
           content: Text(
+
             'Submitted successfully',
           ),
         ),
       );
+
     } catch (e) {
       if (!mounted) return;
 

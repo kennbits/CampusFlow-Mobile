@@ -14,6 +14,9 @@ class WaterReadingPage extends StatefulWidget {
 
 class _WaterReadingPageState
     extends State<WaterReadingPage> {
+
+  bool isSubmitting = false;
+  
   late Future<List<ResourceMeter>>
       metersFuture;
 

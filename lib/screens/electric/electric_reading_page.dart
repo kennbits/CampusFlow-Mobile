@@ -28,7 +28,7 @@ class _ElectricReadingPageState
 
     metersFuture =
         ApiService.getResourceMeters(
-      'electric',
+      'electricity',
     );
   }
 

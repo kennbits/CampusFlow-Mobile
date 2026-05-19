@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'auth_service.dart';
+import 'offline_queue_service.dart';
 
+import '../models/pending_reading.dart';
 import '../models/resource_meter.dart';
 
 class ApiService {
@@ -86,30 +88,72 @@ class ApiService {
     required String reading,
   }) async {
 
-    final token =
-        await AuthService().getToken();
+    try {
 
-    final response = await http.post(
-      Uri.parse('$baseUrl/readings'),
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: {
-        'resource_meter_id': meterId.toString(),
-        'reading': reading,
-      },
-    );
+      final token =
+          await AuthService().getToken();
 
-    print(response.statusCode);
-    print(response.body);
+      final response = await http.post(
 
-    if (response.statusCode == 200 ||
-        response.statusCode == 201) {
-      return jsonDecode(response.body);
+        Uri.parse('$baseUrl/readings'),
+
+        headers: {
+
+          'Accept':
+              'application/json',
+
+          'Authorization':
+              'Bearer $token',
+        },
+
+        body: {
+
+          'resource_meter_id':
+              meterId.toString(),
+
+          'reading':
+              reading,
+        },
+      );
+
+      print(response.statusCode);
+
+      print(response.body);
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201) {
+
+        return jsonDecode(
+          response.body,
+        );
+      }
+
+      throw Exception(
+        response.body,
+      );
+
+    } catch (e) {
+
+      // Save offline if API fails
+      await OfflineQueueService()
+          .saveReading(
+
+        PendingReading(
+
+          meterId: meterId,
+
+          reading: reading,
+        ),
+      );
+
+      return {
+
+        'offline': true,
+
+        'message':
+            'Saved offline. Will sync later.',
+      };
     }
-
-    throw Exception(response.body);
   }
 
   static Future<dynamic> changePassword({
